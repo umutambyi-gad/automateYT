@@ -20,7 +20,7 @@ class Automate:
 				collections.append(url.strip())
 		return collections
 
-	def download(self, after=0, location=os.path.locationname(__file__), shutdown=False):
+	def download(self, after=0, location=os.path.dirname(__file__), shutdown=False):
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for key, value in self.urls_with_res['urls_with_res'].items():
@@ -34,3 +34,5 @@ class Automate:
 				os.system('shutdown now -h') # notice that you have root privileges
 			elif platform.system() == 'Darwin':
 				os.system('shutdown -h now') # notice that you have root privileges
+
+Automate().download()
