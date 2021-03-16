@@ -3,11 +3,11 @@ import os
 import time
 import platform
 
+
 class Automate:
-	def __init__(self, *urls):
+	def __init__(self, *urls, **urls_with_res):
 		self.urls = urls
-		if not len([i for i in self.urls if i]) > 0:
-			raise Exception("List of urls can not be empty")
+		self.urls_with_res = urls_with_res
 	
 	@classmethod
 	def playList(cls, urls):
@@ -22,6 +22,9 @@ class Automate:
 
 	def download(self, after=0, dir=os.path.dirname(__file__), shutdown=False):
 		time.sleep(after)
+		if len(self.urls_with_res.keys()) > 0:
+			for key, value in self.urls_with_res['urls_with_res'].items():
+				YouTube(key.strip()).youtube.streams.filter(res=value.strip()).download(dir)
 		for url in Automate.playList(self.urls):
 			YouTube(url).youtube.streams.first().download(dir)
 		if shutdown:
@@ -31,4 +34,3 @@ class Automate:
 				os.system('shutdown now -h') # notice that you have root privileges
 			elif platform.system() == 'Darwin':
 				os.system('shutdown -h now') # notice that you have root privileges
-
