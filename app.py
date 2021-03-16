@@ -20,13 +20,13 @@ class Automate:
 				collections.append(url.strip())
 		return collections
 
-	def download(self, after=0, dir=os.path.dirname(__file__), shutdown=False):
+	def download(self, after=0, location=os.path.locationname(__file__), shutdown=False):
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for key, value in self.urls_with_res['urls_with_res'].items():
-				YouTube(key.strip()).youtube.streams.filter(res=value.strip()).download(dir)
+				YouTube(key.strip()).youtube.streams.filter(res=value.strip()).download(location)
 		for url in Automate.playList(self.urls):
-			YouTube(url).youtube.streams.first().download(dir)
+			YouTube(url).youtube.streams.first().download(location)
 		if shutdown:
 			if platform.system() == 'Windows':
 				os.system('shutdown /s /t 1')
