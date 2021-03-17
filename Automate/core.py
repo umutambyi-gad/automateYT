@@ -6,7 +6,7 @@ from exceptions import (
 	NoVideosError,
 	NoResolutionError
 )
-
+from timing import TimeFormatting
 
 class Automate:
 	"""class for automating youtube videos downloading"""
@@ -59,7 +59,7 @@ class Automate:
 
 	def download(
 		self,
-		after: int = 0,
+		after: str = '0s',
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False,
 		highest_res: bool = True,
@@ -67,8 +67,8 @@ class Automate:
 	) -> None:
 		"""Function for downloading YouTube videos
 
-		:param int after
-			number of seconds to delay before download
+		:param str after
+			string that is related to time format ex. `2h:30m`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
@@ -85,8 +85,7 @@ class Automate:
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-
-		time.sleep(after)
+		time.sleep(TimeFormatting(after).convert())
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
 				YouTube(video.strip()).streams.get_by_resolution(resolution.strip()).download(location)
@@ -103,7 +102,7 @@ class Automate:
 		self,
 		lang_code: str = 'en',
 		auto_generate_version: bool = True,
-		after: int = 0,
+		after: str = '0s',
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
@@ -114,8 +113,8 @@ class Automate:
 		:param str auto_generate_version
 			by default True, this downloads auto generated version of the same language
 			code when there wasn't subtitle of that language code
-		:param int after
-			number of seconds to delay before download
+		:param str after
+			string that is related to time format ex. `2h:30m`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
@@ -124,7 +123,7 @@ class Automate:
         :rtype: None
 
 		"""
-		time.sleep(after)
+		time.sleep(TimeFormatting(after).convert())
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
