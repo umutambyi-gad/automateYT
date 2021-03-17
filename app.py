@@ -38,9 +38,9 @@ class Automate:
 				YouTube(video.strip()).youtube.streams.get_by_resolution(resolution.strip()).download(location)
 		for url in self.__playList(self.urls):
 			if highest_res and not lowest_res:
-				YouTube(url).youtube.streams.get_highest_res_resolution().download(location)
+				YouTube(url).youtube.streams.get_highest_resolution().download(location)
 			elif lowest_res and not highest_res:
-				YouTube(url).youtube.streams.get_lowest_res_resolution().download(location)
+				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
 			else:
 				raise Exception("Neither highest nor lowest resolution specified or both are specified")
 		if shutdown:
