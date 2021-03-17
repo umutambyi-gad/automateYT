@@ -7,14 +7,14 @@ import platform
 class Automate:
 	def __init__(
 		self,
-		*urls,
-		**urls_with_res
+		*urls: tuple,
+		**urls_with_res: dict
 	):
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
 	@classmethod
-	def playList(cls, urls):
+	def playList(cls, urls: tuple) -> list:
 		collections = []
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
@@ -31,7 +31,7 @@ class Automate:
 		shutdown=False,
 		highest=True,
 		lowest=False
-	):
+	) -> None:
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
