@@ -8,6 +8,7 @@ from exceptions import (
 )
 from timing import TimeFormatting
 
+
 class Automate:
 	"""class for automating youtube videos downloading"""
 	def __init__(
@@ -68,7 +69,7 @@ class Automate:
 		"""Function for downloading YouTube videos
 
 		:param str after
-			string that is related to time format ex. `2h:30m`
+			string that is related to time format ex. `2h:30m` or `2h-30m`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
@@ -114,7 +115,7 @@ class Automate:
 			by default True, this downloads auto generated version of the same language
 			code when there wasn't subtitle of that language code
 		:param str after
-			string that is related to time format ex. `2h:30m`
+			string that is related to time format ex. `2h:30m` or `2h-30m`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
