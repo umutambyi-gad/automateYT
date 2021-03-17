@@ -2,19 +2,26 @@ from pytube import YouTube
 import os
 import time
 import platform
+from exceptions import (
+	NoVideosError,
+	NoResolutionError
+)
 
 
 class Automate:
 	def __init__(
 		self,
-		*urls: tuple,
+		*urls: list or tuple,
 		**urls_with_res: dict
 	):
 		self.urls = urls
 		self.urls_with_res = urls_with_res
+
+		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
+			raise NoVideosError("List of videos can not be empty")
 	
 	
-	def __playList(self, urls: tuple) -> list:
+	def __playList(self, urls: list or tuple) -> list:
 		collections = []
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
@@ -47,7 +54,7 @@ class Automate:
 			elif lowest_res and not highest_res:
 				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
 			else:
-				raise Exception("Neither highest nor lowest resolution specified")
+				raise NoResolutionError("Neither highest nor lowest resolution specified")
 		if shutdown:
 			if platform.system() == 'Windows':
 				os.system('shutdown /s /t 1')
@@ -55,5 +62,3 @@ class Automate:
 				os.system('shutdown now -h') # notice that you have root privileges
 			elif platform.system() == 'Darwin':
 				os.system('shutdown -h now') # notice that you have root privileges
-
-Automate().download()
