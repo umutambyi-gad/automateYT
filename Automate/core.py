@@ -12,7 +12,7 @@ class Automate:
 	"""class for automating youtube videos downloading"""
 	def __init__(
 		self,
-		*urls: list or tuple,
+		*urls: tuple or list,
 		**urls_with_res: dict
 	):
 		"""Construct a :class:`Automate <Automate>`.
@@ -30,7 +30,7 @@ class Automate:
 			raise NoVideosError("List of videos can not be empty")
 	
 	
-	def __playList(self, urls: list or tuple) -> list:
+	def __playList(self, urls: tuple or list) -> list:
 		"""Convert (tuple or list) or nested tuple of videos into list.
 
 		:param tuple or list urls
@@ -60,7 +60,7 @@ class Automate:
 	def download(
 		self,
 		after: int = 0,
-		location: str = os.path.dirname(__file__),
+		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False,
 		highest_res: bool = True,
 		lowest_res: bool = False
@@ -104,7 +104,7 @@ class Automate:
 		lang_code: str = 'en',
 		auto_generate_version: bool = True,
 		after: int = 0,
-		location: str = os.path.dirname(__file__),
+		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
 		"""Function for downloading YouTube videos' subtitle
