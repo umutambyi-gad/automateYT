@@ -102,6 +102,7 @@ class Automate:
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
+		auto_generate_version: bool = True,
 		after: int = 0,
 		location: str = os.path.dirname(__file__),
 		shutdown: bool = False
@@ -110,6 +111,9 @@ class Automate:
 		
 		:param str lang_code
 			language code of the subtitle to download by default is 'en' (English)
+		:param str auto_generate_version
+			by default True, this downloads auto generated version of the same language
+			code when there wasn't subtitle of that language code
 		:param int after
 			number of seconds to delay before download
 		:param str location
@@ -126,5 +130,9 @@ class Automate:
 			if youtube.captions.__len__() > 0:
 				if youtube.captions[lang_code].code == lang_code:
 					youtube.captions[lang_code].download(youtube.title, output_path=location)
+				elif auto_generate_version:
+					if youtube.captions[lang_code].code == f"a.{lang_code}":
+						lang_code = f"a.{lang_code}"
+						youtube.captions[lang_code].download(youtube.title, output_path=location)
 		if shutdown:
 			self.shutdown()
