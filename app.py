@@ -5,7 +5,11 @@ import platform
 
 
 class Automate:
-	def __init__(self, *urls, **urls_with_res):
+	def __init__(
+		self,
+		*urls,
+		**urls_with_res
+	):
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
@@ -20,13 +24,30 @@ class Automate:
 				collections.append(url.strip())
 		return collections
 
-	def download(self, after=0, location=os.path.dirname(__file__), shutdown=False):
+	def download(
+		self,
+		after=0,
+		location=os.path.dirname(__file__),
+		shutdown=False,
+		highest=True,
+		lowest=False
+	):
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
-			for key, value in self.urls_with_res['urls_with_res'].items():
-				YouTube(key.strip()).youtube.streams.filter(res=value.strip()).download(location)
+			for video, resolution in self.urls_with_res['urls_with_res'].items():
+				YouTube(video.strip()).youtube.streams.get_by_resolution(resolution.strip()).download(location)
 		for url in Automate.playList(self.urls):
-			YouTube(url).youtube.streams.first().download(location)
+			if highest and not lowest:
+				YouTube(url).youtube.streams.get_highest_resolution().download(location)
+			elif lowest and not highest:
+				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
+			else:
+				raise Exception(
+					"""
+					Neither highest nor lowest resolution specified or Both specified
+					"""
+				)
+
 		if shutdown:
 			if platform.system() == 'Windows':
 				os.system('shutdown /s /t 1')
