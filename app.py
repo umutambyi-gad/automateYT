@@ -32,6 +32,11 @@ class Automate:
 		highest_res=True,
 		lowest_res=False
 	) -> None:
+		if highest_res:
+			lowest_res = False
+		elif lowest_res:
+			highest_res = False
+
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
@@ -42,7 +47,7 @@ class Automate:
 			elif lowest_res and not highest_res:
 				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
 			else:
-				raise Exception("Neither highest nor lowest resolution specified or both are specified")
+				raise Exception("Neither highest nor lowest resolution specified")
 		if shutdown:
 			if platform.system() == 'Windows':
 				os.system('shutdown /s /t 1')
