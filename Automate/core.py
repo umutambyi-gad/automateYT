@@ -2,7 +2,7 @@ from pytube import YouTube
 import os
 import time
 import platform
-from automate.exceptions import (
+from exceptions import (
 	NoVideosError,
 	NoResolutionError
 )
@@ -48,13 +48,22 @@ class Automate:
 				collections.append(url.strip())
 		return collections
 
+	def shutdown(self):
+		"""Function for shutting down the computer using API command"""
+		if platform.system() == 'Windows':
+			os.system('shutdown /s /t 1')
+		elif platform.system() == 'Linux':
+			os.system('shutdown now -h') # notice that you have root privileges
+		elif platform.system() == 'Darwin':
+			os.system('shutdown -h now') # notice that you have root privileges
+
 	def download(
 		self,
-		after=0,
-		location=os.path.dirname(__file__),
-		shutdown=False,
-		highest_res=True,
-		lowest_res=False
+		after: int = 0,
+		location: str = os.path.dirname(__file__),
+		shutdown: bool = False,
+		highest_res: bool = True,
+		lowest_res: bool = False
 	) -> None:
 		"""Function for downloading YouTube videos
 
@@ -80,18 +89,42 @@ class Automate:
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
-				YouTube(video.strip()).youtube.streams.get_by_resolution(resolution.strip()).download(location)
+				YouTube(video.strip()).streams.get_by_resolution(resolution.strip()).download(location)
 		for url in self.__playList(self.urls):
 			if highest_res and not lowest_res:
-				YouTube(url).youtube.streams.get_highest_resolution().download(location)
+				YouTube(url).streams.get_highest_resolution().download(location)
 			elif lowest_res and not highest_res:
-				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
+				YouTube(url).streams.get_lowest_resolution().download(location)
 			else:
 				raise NoResolutionError("Neither highest nor lowest resolution specified")
 		if shutdown:
-			if platform.system() == 'Windows':
-				os.system('shutdown /s /t 1')
-			elif platform.system() == 'Linux':
-				os.system('shutdown now -h') # notice that you have root privileges
-			elif platform.system() == 'Darwin':
-				os.system('shutdown -h now') # notice that you have root privileges
+			self.shutdown()
+	def download_subtitle(
+		self,
+		lang_code: str = 'en',
+		after: int = 0,
+		location: str = os.path.dirname(__file__),
+		shutdown: bool = False
+	) -> None:
+		"""Function for downloading YouTube videos' subtitle
+		
+		:param str lang_code
+			language code of the subtitle to download by default is 'en' (English)
+		:param int after
+			number of seconds to delay before download
+		:param str location
+			location on your computer to save the downloads
+		:param bool shutdown
+			if shutdown is True computer shuts down after downloading
+
+        :rtype: None
+
+		"""
+		time.sleep(after)
+		for url in self.__playList(self.urls):
+			youtube = YouTube(url)
+			if youtube.captions.__len__() > 0:
+				if youtube.captions[lang_code].code == lang_code:
+					youtube.captions[lang_code].download(youtube.title, output_path=location)
+		if shutdown:
+			self.shutdown()
