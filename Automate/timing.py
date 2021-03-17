@@ -1,8 +1,19 @@
 class TimeFormatting:
-	def __init__(self, time):
+	"""class for formating string time related (2h:30m) into seconds"""
+	def __init__(self, time: str):
+		"""Construct a :class:`TimeFormatting <TimeFormatting>`.
+
+		:param str time
+			string that is related to time format ex. `2h:30m`
+		"""
 		self.time = time
 
-	def convert(self):
+	def convert(self) -> int:
+		"""Function for converting hours, minutes, seconds into seconds.
+
+		:rtype: int
+
+		"""
 		delay_sec = 0
 		h, m, s = ('', '', '')
 		timeList = [i for i in self.time.split(':') if i]
