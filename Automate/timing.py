@@ -1,5 +1,5 @@
 class TimeFormatting:
-	"""class for formating string time related (2h:30m) into seconds"""
+	"""class for formating string time related (2h:30m or 2h-30m) into seconds"""
 	def __init__(self, time: str):
 		"""Construct a :class:`TimeFormatting <TimeFormatting>`.
 
@@ -16,15 +16,24 @@ class TimeFormatting:
 		"""
 		delay_sec = 0
 		h, m, s = ('', '', '')
-		timeList = [i for i in self.time.split(':') if i]
+		timeList = []
+		dash_delimeter = True if '-' in self.time else False
+		colon_delimeter = True if ':' in self.time else False
+		no_delimeter = not dash_delimeter and not colon_delimeter
+		if dash_delimeter and not colon_delimeter:
+			timeList = [i for i in self.time.split('-') if i]
+		elif colon_delimeter and not dash_delimeter:
+			timeList = [i for i in self.time.split(':') if i]
+		elif no_delimeter:
+			timeList = [self.time]
 
-		for time in timeList:
-			if time[-1] == 'h':
-				h = int(time[:-1])
-			elif time[-1] == 'm':
-				m = int(time[:-1])
-			elif time[-1] == 's':
-				s = int(time[:-1])
+		for t in timeList:
+			if t[-1] == 'h':
+				h = int(t[:-1])
+			elif t[-1] == 'm':
+				m = int(t[:-1])
+			elif t[-1] == 's':
+				s = int(t[:-1])
 		if h:
 			delay_sec += h*60*60
 		if m:
