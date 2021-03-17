@@ -13,8 +13,8 @@ class Automate:
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
-	@classmethod
-	def playList(cls, urls: tuple) -> list:
+	
+	def __playList(self, urls: tuple) -> list:
 		collections = []
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
@@ -29,25 +29,20 @@ class Automate:
 		after=0,
 		location=os.path.dirname(__file__),
 		shutdown=False,
-		highest=True,
-		lowest=False
+		highest_res=True,
+		lowest_res=False
 	) -> None:
 		time.sleep(after)
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
 				YouTube(video.strip()).youtube.streams.get_by_resolution(resolution.strip()).download(location)
-		for url in Automate.playList(self.urls):
-			if highest and not lowest:
-				YouTube(url).youtube.streams.get_highest_resolution().download(location)
-			elif lowest and not highest:
-				YouTube(url).youtube.streams.get_lowest_resolution().download(location)
+		for url in self.__playList(self.urls):
+			if highest_res and not lowest_res:
+				YouTube(url).youtube.streams.get_highest_res_resolution().download(location)
+			elif lowest_res and not highest_res:
+				YouTube(url).youtube.streams.get_lowest_res_resolution().download(location)
 			else:
-				raise Exception(
-					"""
-					Neither highest nor lowest resolution specified or Both specified
-					"""
-				)
-
+				raise Exception("Neither highest nor lowest resolution specified or both are specified")
 		if shutdown:
 			if platform.system() == 'Windows':
 				os.system('shutdown /s /t 1')
