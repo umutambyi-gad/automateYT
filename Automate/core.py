@@ -66,18 +66,19 @@ class Automate:
 		highest_res: bool = True,
 		lowest_res: bool = False
 	) -> None:
-		"""Function for downloading YouTube videos
+		"""Function for automating the downloading of YouTube videos
 
 		:param str after
-			string that is related to time format ex. `2h:30m` or `2h-30m`
+			string time for delaying before the download starts that is writen like.
+			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
-			if shutdown is True computer shuts down after downloading
+			if shutdown is True the computer shuts down after downloading is completely done
 		:param bool highest_res
-			if highest_res is True the script downloads highest resolution
+			if highest_res is True the script gets the highest resolution available
 		:param bool lowest_res
-			if lowest_res is True the script downloads lowest resolution
+			if lowest_res is True the script gets the lowest resolution available
 
         :rtype: None
 
@@ -112,19 +113,21 @@ class Automate:
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
-		"""Function for downloading YouTube videos' subtitle
+		"""Function for automating the downloading of YouTube video's subtitles
 		
 		:param str lang_code
-			language code of the subtitle to download by default is 'en' (English)
+			language code of the subtitle to automate its downloading notice that the default is
+			'en' (English)
 		:param str auto_generate_version
 			by default True, this downloads auto generated version of the same language
-			code when there wasn't subtitle of that language code
+			code in absence of offical one.
 		:param str after
-			string that is related to time format ex. `2h:30m` or `2h-30m`
+			string time for delaying before the download starts that is writen like.
+			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 		:param str location
-			location on your computer to save the downloads
+			location on your computer to save the downloaded videos by default is in `../Downloads`
 		:param bool shutdown
-			if shutdown is True computer shuts down after downloading
+			if shutdown is True the computer shuts down after downloading is completely done
 
         :rtype: None
 
