@@ -49,7 +49,7 @@ class Automate:
 				collections.append(url.strip())
 		return collections
 
-	def shutdown(self):
+	def __shutdown(self):
 		"""Function for shutting down the computer using API command"""
 		if platform.system() == 'Windows':
 			os.system('shutdown /s /t 1')
@@ -104,7 +104,7 @@ class Automate:
 			else:
 				raise NoResolutionError("Neither highest nor lowest resolution specified")
 		if shutdown:
-			self.shutdown()
+			self.__shutdown()
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
@@ -143,4 +143,4 @@ class Automate:
 						lang_code = f"a.{lang_code}"
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
 		if shutdown:
-			self.shutdown()
+			self.__shutdown()
