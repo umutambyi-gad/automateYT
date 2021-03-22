@@ -90,13 +90,17 @@ class Automate:
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-		time.sleep(TimeFormatting(after).convert())
+		
+		time.sleep(TimeFormatting(after).convert()) # delaying
+
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
 				youtube = YouTube(video.strip())
 				if youtube.streams:
 					youtube.streams.get_by_resolution(resolution.strip()).download(location)
-		for url in self.__playList(self.urls):
+		
+		playList = self.__playList(self.urls)
+		for url in playList:
 			youtube = YouTube(url.strip())
 			if highest_res and not lowest_res:
 				if youtube.streams:
