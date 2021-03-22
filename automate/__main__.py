@@ -64,7 +64,8 @@ class Automate:
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False,
 		highest_res: bool = True,
-		lowest_res: bool = False
+		lowest_res: bool = False,
+		retry: int = 1
 	) -> None:
 		"""Function for automating the downloading of YouTube videos
 
@@ -79,6 +80,8 @@ class Automate:
 			if highest_res is True the script gets the highest resolution available
 		:param bool lowest_res
 			if lowest_res is True the script gets the lowest resolution available
+		:param int retry
+			number of times to retry while there is something went wrong
 
         :rtype: None
 
