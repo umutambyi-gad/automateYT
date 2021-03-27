@@ -7,5 +7,5 @@ __author__ = "Umutambyi Gad"
 __copyright__ = "Copyright 2021 Umutambyi Gad"
 
 from automate.__main__ import Automate
-from automate.timing import TimeFormatting
+from automate.__main__ import TimeFormatting
 
