@@ -2,7 +2,7 @@ from pytube import YouTube
 import os
 import time
 import platform
-from warnings import (
+from exceptions import (
 	NoVideosError,
 	NoResolutionError
 )
