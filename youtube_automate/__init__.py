@@ -6,6 +6,6 @@ __title__ = "automate"
 __author__ = "Umutambyi Gad"
 __copyright__ = "Copyright 2021 by Umutambyi Gad"
 
-from youtube_automate.__main__ import Automate
-from youtube_automate.__main__ import TimeFormatting
+from .__main__ import Automate
+from .__main__ import TimeFormatting
 

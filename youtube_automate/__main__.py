@@ -2,7 +2,7 @@ from pytube import YouTube
 import os
 import time
 import platform
-from exceptions import (
+from .exceptions import (
 	NoVideosError,
 	NoResolutionError
 )
@@ -18,7 +18,7 @@ class TimeFormatting:
 		"""
 		self.time = time
 
-	def convert(self) -> int:
+	def __convert(self) -> int:
 		"""Function for converting hours, minutes, seconds into seconds.
 
 		:rtype: int
@@ -51,6 +51,7 @@ class TimeFormatting:
 		if s:
 			delay_sec += s
 		return delay_sec
+		
 
 
 class Automate:
