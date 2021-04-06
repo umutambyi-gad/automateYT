@@ -13,8 +13,9 @@ class Timing:
 	def after(self, time: str) -> None:
 		"""Method for converting hours, minutes, seconds into seconds.
 		
-		:param str time
-			string that is related to time format ex. `2h:30m`
+		:param str after
+			string time for delaying which written in human readable format - ex.
+			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 
 		:rtype: None
 
@@ -99,7 +100,6 @@ class Automate(Timing):
 
 	def download(
 		self,
-		after: str = '0s',
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False,
 		highest_res: bool = True,
@@ -108,9 +108,6 @@ class Automate(Timing):
 	) -> None:
 		"""Function for automating the downloading of YouTube videos
 
-		:param str after
-			string time for delaying before the download starts that is writen like.
-			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 		:param str location
 			location on your computer to save the downloads
 		:param bool shutdown
@@ -132,8 +129,6 @@ class Automate(Timing):
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-
-		self.after(after) # delaying
 
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
@@ -158,7 +153,6 @@ class Automate(Timing):
 		self,
 		lang_code: str = 'en',
 		auto_generate_version: bool = True,
-		after: str = '0s',
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
@@ -170,9 +164,6 @@ class Automate(Timing):
 		:param str auto_generate_version
 			by default True, this downloads auto generated version of the same language
 			code in absence of offical one.
-		:param str after
-			string time for delaying before the download starts that is writen like.
-			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 		:param str location
 			location on your computer to save the downloaded videos by default is in `../Downloads`
 		:param bool shutdown
@@ -184,7 +175,6 @@ class Automate(Timing):
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
 			raise NoVideosError("List of videos can not be empty")
 
-		self.after(after)  # delaying
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
