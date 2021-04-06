@@ -7,7 +7,7 @@ from .exceptions import (
 )
 
 
-class TimeFormatting:
+class Timing:
 	"""class for formating string time related (2h:30m or 2h-30m) into seconds"""
 
 	def after(self, time: str) -> None:
@@ -132,7 +132,7 @@ class Automate:
 		elif lowest_res:
 			highest_res = False
 
-		TimeFormatting().after(after) # delaying
+		Timing().after(after) # delaying
 
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
@@ -180,7 +180,7 @@ class Automate:
         :rtype: None
 
 		"""
-		TimeFormatting().after(after)  # delaying
+		Timing().after(after)  # delaying
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
