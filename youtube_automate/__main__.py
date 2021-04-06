@@ -47,10 +47,11 @@ class Timing:
 			delay_sec += s
 
 		__import__('time').sleep(delay_sec)
+		
 
 		
 
-class Automate:
+class Automate(Timing):
 	"""class for automating youtube videos downloading"""
 	def __init__(
 		self,
@@ -132,7 +133,7 @@ class Automate:
 		elif lowest_res:
 			highest_res = False
 
-		Timing().after(after) # delaying
+		self.after(after) # delaying
 
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
@@ -180,7 +181,7 @@ class Automate:
         :rtype: None
 
 		"""
-		Timing().after(after)  # delaying
+		self.after(after)  # delaying
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
