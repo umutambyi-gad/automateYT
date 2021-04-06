@@ -87,7 +87,7 @@ class Automate(Timing):
 					collections.append(nested.strip())
 			else:
 				collections.append(url.strip())
-		return collections
+		return [*{*collections}] # removing dublicates
 
 	def __shutdown(self):
 		"""Function for shutting down the computer using API command"""
