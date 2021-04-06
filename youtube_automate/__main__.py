@@ -1,6 +1,5 @@
 from pytube import YouTube
 import os
-import time
 import platform
 from .exceptions import (
 	NoVideosError,
@@ -10,32 +9,28 @@ from .exceptions import (
 
 class TimeFormatting:
 	"""class for formating string time related (2h:30m or 2h-30m) into seconds"""
-	def __init__(self, time: str):
-		"""Construct a :class:`TimeFormatting <TimeFormatting>`.
 
+	def after(self, time: str) -> None:
+		"""Method for converting hours, minutes, seconds into seconds.
+		
 		:param str time
 			string that is related to time format ex. `2h:30m`
-		"""
-		self.time = time
 
-	def __convert(self) -> int:
-		"""Function for converting hours, minutes, seconds into seconds.
-
-		:rtype: int
+		:rtype: None
 
 		"""
 		delay_sec = 0
 		h, m, s = ('', '', '')
 		timeList = []
-		dash_delimeter = True if '-' in self.time else False
-		colon_delimeter = True if ':' in self.time else False
+		dash_delimeter = True if '-' in time else False
+		colon_delimeter = True if ':' in time else False
 		no_delimeter = not dash_delimeter and not colon_delimeter
 		if dash_delimeter and not colon_delimeter:
-			timeList = [i for i in self.time.split('-') if i]
+			timeList = [i for i in time.split('-') if i]
 		elif colon_delimeter and not dash_delimeter:
-			timeList = [i for i in self.time.split(':') if i]
+			timeList = [i for i in time.split(':') if i]
 		elif no_delimeter:
-			timeList = [self.time]
+			timeList = [time]
 
 		for t in timeList:
 			if t[-1] == 'h':
@@ -50,9 +45,10 @@ class TimeFormatting:
 			delay_sec += m*60
 		if s:
 			delay_sec += s
-		return delay_sec
-		
 
+		__import__('time').sleep(delay_sec)
+
+		
 
 class Automate:
 	"""class for automating youtube videos downloading"""
@@ -135,8 +131,8 @@ class Automate:
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-		
-		time.sleep(TimeFormatting(after).convert()) # delaying
+
+		TimeFormatting().after(after) # delaying
 
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
@@ -184,7 +180,7 @@ class Automate:
         :rtype: None
 
 		"""
-		time.sleep(TimeFormatting(after).convert())
+		TimeFormatting().after(after)  # delaying
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
