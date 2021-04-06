@@ -68,9 +68,6 @@ class Automate(Timing):
         """
 		self.urls = urls
 		self.urls_with_res = urls_with_res
-
-		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
-			raise NoVideosError("List of videos can not be empty")
 	
 	
 	def __playList(self, urls: tuple or list) -> list:
@@ -127,7 +124,10 @@ class Automate(Timing):
 
         :rtype: None
 
-        """
+        """	
+		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
+			raise NoVideosError("List of videos can not be empty")
+
 		if highest_res:
 			lowest_res = False
 		elif lowest_res:
@@ -181,6 +181,9 @@ class Automate(Timing):
         :rtype: None
 
 		"""
+		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
+			raise NoVideosError("List of videos can not be empty")
+
 		self.after(after)  # delaying
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
