@@ -2,8 +2,9 @@ from pytube import YouTube
 import os
 import platform
 from .exceptions import (
-	NoVideosError,
-	NoResolutionError
+	PlayListError,
+	ResolutionError,
+	LocationError
 )
 
 
@@ -72,7 +73,7 @@ class Automate(Timing):
 	
 	
 	def __playList(self, urls: tuple or list) -> list:
-		"""Convert (tuple or list) or nested tuple of videos into list.
+		"""Method for converting (tuple or list) or nested tuple of videos into list.
 
 		:param tuple or list urls
 			list or tuple of YouTube watch URL they can be nested or not
@@ -90,7 +91,7 @@ class Automate(Timing):
 		return [*{*collections}] # removing dublicates
 
 	def __shutdown(self):
-		"""Function for shutting down the computer using API command"""
+		"""Method for shutting down the computer using API command"""
 		if platform.system() == 'Windows':
 			os.system('shutdown /s /t 1')
 		elif platform.system() == 'Linux':
@@ -105,7 +106,7 @@ class Automate(Timing):
 		highest_res: bool = True,
 		lowest_res: bool = False,
 	) -> None:
-		"""Function for automating the downloading of YouTube videos
+		"""Method for automating the downloading of YouTube videos
 
 		:param str location
 			location on your computer to save the downloads
@@ -119,7 +120,9 @@ class Automate(Timing):
 
         """	
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
-			raise NoVideosError("List of videos can not be empty")
+			raise PlayListError("List or dict of videos can not be empty")
+		if os.path.exists(location):
+			raise LocationError("provided location (path) doesn't exists")
 
 		if highest_res:
 			lowest_res = False
@@ -142,7 +145,7 @@ class Automate(Timing):
 				if youtube.streams:
 					youtube.streams.get_lowest_resolution().download(location)
 			else:
-				raise NoResolutionError("Neither highest nor lowest resolution specified")
+				raise ResolutionError("Neither highest nor lowest resolution specified")
 		if shutdown:
 			self.__shutdown()
 	def download_subtitle(
@@ -152,7 +155,7 @@ class Automate(Timing):
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
-		"""Function for automating the downloading of YouTube video's subtitles
+		"""Method for automating the downloading of YouTube video's subtitles
 		
 		:param str lang_code
 			language code of the subtitle to automate its downloading notice that the default is
@@ -169,7 +172,7 @@ class Automate(Timing):
 
 		"""
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
-			raise NoVideosError("List of videos can not be empty")
+			raise PlayListError("List or dict of videos can not be empty")
 
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
