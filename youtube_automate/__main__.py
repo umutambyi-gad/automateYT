@@ -32,7 +32,12 @@ class Timing:
 		elif colon_delimeter and not dash_delimeter:
 			timeList = [i for i in time.split(':') if i]
 		elif no_delimeter:
-			timeList = [time]
+			time = [*time]
+			diff = lambda arr_1, arr_2: [x for x in arr_1 if x not in arr_2]
+			for i in time:
+				if i.isalpha():
+					timeList.append(''.join(time[:time.index(i)+1]))
+					time = diff(time, time[:time.index(i)+1])	
 
 		for t in timeList:
 			if t[-1] == 'h':
