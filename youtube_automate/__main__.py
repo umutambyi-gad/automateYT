@@ -4,7 +4,8 @@ import platform
 from .exceptions import (
 	PlayListError,
 	ResolutionError,
-	LocationError
+	LocationError,
+	NonDigitIndexedError
 )
 
 
@@ -76,7 +77,6 @@ class Automate(Timing):
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
-	
 	def __playList(self, urls: tuple or list) -> list:
 		"""Method for converting (tuple or list) or nested tuple of videos into list.
 
@@ -87,6 +87,8 @@ class Automate(Timing):
 
         """
 		collections = []
+		if not isinstance(urls, list) or isinstance(urls, tuple):
+			raise NonDigitIndexedError("only tuple and list allowed")
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
 				for nested in url:
@@ -133,14 +135,17 @@ class Automate(Timing):
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-
+		
 		if len(self.urls_with_res.keys()) > 0:
 			for video, resolution in self.urls_with_res['urls_with_res'].items():
 				youtube = YouTube(video.strip())
 				if youtube.streams:
-					youtube.streams.get_by_resolution(resolution.strip()).download(location)
-		
-		playList = self.__playList(self.urls)
+					if not youtube.streams.filter(progressive=True, res=resolution.strip()):
+						youtube.streams.get_highest_resolution().download(location)
+					else:
+						youtube.streams.get_by_resolution(resolution.strip()).download(location)
+		if len(self.urls) > 0:
+			playList = self.__playList(self.urls)
 		for url in playList:
 			youtube = YouTube(url.strip())
 			if highest_res and not lowest_res:
@@ -153,6 +158,7 @@ class Automate(Timing):
 				raise ResolutionError("Neither highest nor lowest resolution specified")
 		if shutdown:
 			self.__shutdown()
+
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
