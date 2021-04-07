@@ -126,7 +126,7 @@ class Automate(Timing):
         """	
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
 			raise PlayListError("List or dict of videos can not be empty")
-		if os.path.exists(location):
+		if not os.path.exists(location):
 			raise LocationError("provided location (path) doesn't exists")
 
 		if highest_res:
@@ -178,6 +178,9 @@ class Automate(Timing):
 		"""
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
 			raise PlayListError("List or dict of videos can not be empty")
+
+		if not os.path.exists(location):
+			raise LocationError("provided location (path) doesn't exists")
 
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
