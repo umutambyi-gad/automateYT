@@ -12,3 +12,7 @@ class ResolutionError(AutomateError):
 
 class LocationError(AutomateError):
 	"""Invalid provided location (path doesn't exists)"""
+
+
+class NonDigitIndexedError(AutomateError):
+	"""Error for non digit indexed like (tuple, list) detected"""
