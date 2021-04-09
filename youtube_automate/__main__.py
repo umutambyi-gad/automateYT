@@ -118,6 +118,8 @@ class Automate(Timing):
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		highest_res: bool = True,
 		lowest_res: bool = False,
+		subtitle: bool = False,
+		shutdown: bool = False
 	) -> None:
 		"""Method for automating the downloading of YouTube videos or audios
 
@@ -129,6 +131,12 @@ class Automate(Timing):
 
 		:param bool lowest_res
 			if lowest_res is True the script gets the lowest resolution available
+
+		:param bool subtitle
+			if subtitle is True english version or english auto generated subtitle is downloaded  
+
+		:param bool shutdown
+            if shutdown is True the computer shuts down after downloads is completely done
 
         :rtype: None
 
@@ -165,12 +173,16 @@ class Automate(Timing):
 			else:
 				raise ResolutionError("Neither highest nor lowest resolution specified")
 
+		if subtitle:
+			self.download_subtitle(location=location)
+
 
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
 		auto_generated: bool = True,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
+		shutdown: bool = False
 	) -> None:
 		"""Method for automating the downloading of YouTube video's subtitles
 		
@@ -184,6 +196,9 @@ class Automate(Timing):
 
 		:param str location
 			location on your computer to save the downloads, by default is in Downloads
+
+		:param bool shutdown
+            if shutdown is True the computer shuts down after downloads is completely done
 
         :rtype: None
 
