@@ -1,7 +1,6 @@
 from pytube import YouTube
 import os
 import platform
-import re
 from .exceptions import (
 	EmptyLookUpListError,
 	ResolutionAbsenceError,
@@ -26,10 +25,6 @@ class Timing:
 		delay_sec = 0
 		h, m, s = ('', '', '')
 		timeList = []
-
-		# Check for non allowed delimeter
-		if re.match(re.compile(), time):
-			
 
 		dash_delimeter = True if '-' in time else False
 		colon_delimeter = True if ':' in time else False
@@ -128,6 +123,13 @@ class Automate(Timing):
 		:rtype: yaml or json
 		"""
 
+		def size_fmt(size, suffix='B'):
+			for unit in ('','Ki','Mi','Gi','Ti','Pi','Ei','Zi'):
+				if abs(size) < 1024.0:
+					return "%3.1f%s%s" % (size, unit, suffix)
+				size /= 1024.0
+			return "%.1f%s%s" % (size, 'Yi', suffix)
+
 		#check if either self.urls_with_res or self.urls is empty to raise EmptyLookUpListError
 		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
 			raise EmptyLookUpListError("List or dict of videos can not be empty")
@@ -156,7 +158,7 @@ class Automate(Timing):
 					'author': youtube.author,
 					'publish_date': str(youtube.publish_date.date()),
 					'type': vid_type.mime_type if vid_type else youtube.streams.get_highest_resolution().mime_type,
-					'filesize': filesize.filesize if filesize else youtube.streams.get_highest_resolution().filesize,
+					'filesize': size_fmt(filesize.filesize) if filesize else size_fmt(youtube.streams.get_highest_resolution().filesize),
 					'available_resolution': available_resolution,
 					'highest_resolution': youtube.streams.get_highest_resolution().resolution,
 					'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
@@ -183,7 +185,7 @@ class Automate(Timing):
 				'author': youtube.author,
 				'publish_date': str(youtube.publish_date.date()),
 				'type': youtube.streams.get_highest_resolution().mime_type,
-				'filesize': youtube.streams.get_highest_resolution().filesize,
+				'filesize': size_fmt(youtube.streams.get_highest_resolution().filesize),
 				'available_resolution': available_resolution,
 				'highest_resolution': youtube.streams.get_highest_resolution().resolution,
 				'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
