@@ -10,18 +10,19 @@ from .exceptions import (
 
 
 class Timing:
-	"""class for formating string time related (2h:30m or 2h-30m) into seconds"""
+	"""class for converting string time looks like (2h:30m, 2h30m, or 2h-30m) into seconds"""
 
 	def after(self, time: str) -> None:
 		"""Method for converting hours, minutes, seconds into seconds.
 		
-		:param str after
+		:param str time
 			string time for delaying which written in human readable format - ex.
 			`2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 
 		:rtype: None
 
 		"""
+
 		delay_sec = 0
 		h, m, s = ('', '', '')
 		timeList = []
@@ -60,7 +61,8 @@ class Timing:
 		
 
 class Automate(Timing):
-	"""class for automating youtube videos downloading"""
+	"""class for automating youtube videos or audios downloading"""
+
 	def __init__(
 		self,
 		*urls: tuple or list,
@@ -69,16 +71,18 @@ class Automate(Timing):
 		"""Construct a :class:`Automate <Automate>`.
 
         :param list or tuple urls:
-            valid list or tuple of YouTube watch URL.
+            valid list or tuple of YouTube watch URLs.
+
         :param dict urls_with_res:
-            dict where keys are valid YouTube watch URL and values are valid resolution.
+            dict where keys are valid YouTube watch URLs and values are valid resolutions.
 
         """
+
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
 	def __playList(self, urls: tuple or list) -> list:
-		"""Method for converting (tuple or list) or nested tuple of videos into list.
+		"""Private method for converting (tuple or list) or nested tuple of videos into list.
 
 		:param tuple or list urls
 			list or tuple of YouTube watch URL they can be nested or not
@@ -86,8 +90,9 @@ class Automate(Timing):
         :rtype: list
 
         """
+
 		collections = []
-		if not isinstance(urls, list) or isinstance(urls, tuple):
+		if not isinstance(urls, list) or isinstance(urls, tuple): # non tuple or list detection
 			raise NonDigitIndexedError("only tuple and list allowed")
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
@@ -97,8 +102,10 @@ class Automate(Timing):
 				collections.append(url.strip())
 		return [*{*collections}] # removing dublicates
 
+
 	def __shutdown(self):
-		"""Method for shutting down the computer using API command"""
+		"""Private method for shutting down the computer using API command"""
+
 		if platform.system() == 'Windows':
 			os.system('shutdown /s /t 1')
 		elif platform.system() == 'Linux':
@@ -113,19 +120,24 @@ class Automate(Timing):
 		highest_res: bool = True,
 		lowest_res: bool = False,
 	) -> None:
-		"""Method for automating the downloading of YouTube videos
+		"""Method for automating the downloading of YouTube videos or audios
 
 		:param str location
-			location on your computer to save the downloads
+			location on your computer to save the downloads, by default is in Downloads
+
 		:param bool shutdown
-			if shutdown is True the computer shuts down after downloading is completely done
+			if shutdown is True the computer shuts down after downloads is completely done
+
 		:param bool highest_res
 			if highest_res is True the script gets the highest resolution available
+
 		:param bool lowest_res
 			if lowest_res is True the script gets the lowest resolution available
+
         :rtype: None
 
         """	
+
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
 			raise PlayListError("List or dict of videos can not be empty")
 		if not os.path.exists(location):
@@ -162,7 +174,7 @@ class Automate(Timing):
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
-		auto_generate_version: bool = True,
+		auto_generated: bool = True,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
 	) -> None:
@@ -171,17 +183,21 @@ class Automate(Timing):
 		:param str lang_code
 			language code of the subtitle to automate its downloading notice that the default is
 			'en' (English)
-		:param str auto_generate_version
+
+		:param str auto_generated
 			by default True, this downloads auto generated version of the same language
 			code in absence of offical one.
+
 		:param str location
-			location on your computer to save the downloaded videos by default is in `../Downloads`
+			location on your computer to save the downloads, by default is in Downloads
+
 		:param bool shutdown
-			if shutdown is True the computer shuts down after downloading is completely done
+			if shutdown is True the computer shuts down after downloads is completely done
 
         :rtype: None
 
 		"""
+
 		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
 			raise PlayListError("List or dict of videos can not be empty")
 
@@ -193,7 +209,7 @@ class Automate(Timing):
 			if youtube.captions.__len__() > 0:
 				if youtube.captions[lang_code].code == lang_code:
 					youtube.captions[lang_code].download(youtube.title, output_path=location)
-				elif auto_generate_version:
+				elif auto_generated:
 					if youtube.captions[lang_code].code == f"a.{lang_code}":
 						lang_code = f"a.{lang_code}"
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
