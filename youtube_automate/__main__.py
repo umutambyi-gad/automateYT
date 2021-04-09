@@ -103,8 +103,8 @@ class Automate(Timing):
 		return [*{*collections}] # removing dublicates
 
 
-	def __shutdown(self):
-		"""Private method for shutting down the computer using API command"""
+	def shutdown(self):
+		"""Method for shutting down the computer using API command"""
 
 		if platform.system() == 'Windows':
 			os.system('shutdown /s /t 1')
@@ -116,7 +116,6 @@ class Automate(Timing):
 	def download(
 		self,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
-		shutdown: bool = False,
 		highest_res: bool = True,
 		lowest_res: bool = False,
 	) -> None:
@@ -124,9 +123,6 @@ class Automate(Timing):
 
 		:param str location
 			location on your computer to save the downloads, by default is in Downloads
-
-		:param bool shutdown
-			if shutdown is True the computer shuts down after downloads is completely done
 
 		:param bool highest_res
 			if highest_res is True the script gets the highest resolution available
@@ -168,15 +164,13 @@ class Automate(Timing):
 					youtube.streams.get_lowest_resolution().download(location)
 			else:
 				raise ResolutionError("Neither highest nor lowest resolution specified")
-		if shutdown:
-			self.__shutdown()
+
 
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
 		auto_generated: bool = True,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
-		shutdown: bool = False
 	) -> None:
 		"""Method for automating the downloading of YouTube video's subtitles
 		
@@ -190,9 +184,6 @@ class Automate(Timing):
 
 		:param str location
 			location on your computer to save the downloads, by default is in Downloads
-
-		:param bool shutdown
-			if shutdown is True the computer shuts down after downloads is completely done
 
         :rtype: None
 
@@ -213,6 +204,4 @@ class Automate(Timing):
 					if youtube.captions[lang_code].code == f"a.{lang_code}":
 						lang_code = f"a.{lang_code}"
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
-		if shutdown:
-			self.__shutdown()
 
