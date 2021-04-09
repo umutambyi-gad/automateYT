@@ -113,6 +113,23 @@ class Automate(Timing):
 		elif platform.system() == 'Darwin':
 			os.system('shutdown -h now') # notice that you have root privileges
 
+	def __check_availabilty(self, location: str = None):
+		"""Private method for checking if either self.urls_with_res or self.urls is empty and raise
+		EmptyLookUpListError also checks if given location exists otherwise raise NonExistLocationError
+
+		:param str location
+			string location gets the location where the downloads will be save on file system
+
+		:rtype: None
+		"""
+
+		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
+			raise EmptyLookUpListError("List or dict of videos can not be empty")
+
+		if location is not None:
+			if not os.path.exists(location):
+				raise NonExistLocationError("provided location (path) doesn't exists")
+
 	def info(self, fmt: str = 'json'):
 		"""Method for giving some useful information about the playlist(videos, audios)
 
@@ -130,9 +147,8 @@ class Automate(Timing):
 				size /= 1024.0
 			return "%.1f%s%s" % (size, 'Yi', suffix)
 
-		#check if either self.urls_with_res or self.urls is empty to raise EmptyLookUpListError
-		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
-			raise EmptyLookUpListError("List or dict of videos can not be empty")
+		# check if required stuffs are available
+		self.__check_availabilty()
 
 		found = []
 
@@ -229,10 +245,8 @@ class Automate(Timing):
 
         """	
 
-		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
-			raise EmptyLookUpListError("List or dict of videos can not be empty")
-		if not os.path.exists(location):
-			raise NonExistLocationError("provided location (path) doesn't exists")
+		# check if required stuffs are available
+		self.__check_availabilty(location=location)
 
 		if highest_res:
 			lowest_res = False
@@ -293,11 +307,8 @@ class Automate(Timing):
 
 		"""
 
-		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
-			raise EmptyLookUpListError("List or dict of videos can not be empty")
-
-		if not os.path.exists(location):
-			raise NonExistLocationError("provided location (path) doesn't exists")
+		# check if required stuffs are available
+		self.__check_availabilty(location=location)
 
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
