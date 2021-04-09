@@ -2,13 +2,13 @@ class AutomateError(Exception):
 	"""Base Automate exception that all relevant others inherent from"""
 
 
-class PlayListError(AutomateError):
+class EmptyLookUpListError(AutomateError):
 	"""Empty list of videos to download"""
 
 
-class ResolutionError(AutomateError):
+class ResolutionAbsenceError(AutomateError):
 	"""key video(s) without coresponding resolution value(s)"""
 
 
-class LocationError(AutomateError):
+class NonExistLocationError(AutomateError):
 	"""Invalid provided location (path doesn't exists)"""

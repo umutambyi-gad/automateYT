@@ -1,18 +1,18 @@
 from pytube import YouTube
 import os
 import platform
+import re
 from .exceptions import (
-	PlayListError,
-	ResolutionError,
-	LocationError,
-	NonDigitIndexedError
+	EmptyLookUpListError,
+	ResolutionAbsenceError,
+	NonExistLocationError
 )
 
 
 class Timing:
 	"""class for converting string time looks like (2h:30m, 2h30m, or 2h-30m) into seconds"""
 
-	def after(self, time: str) -> None:
+	def after(self, time: str):
 		"""Method for converting hours, minutes, seconds into seconds.
 		
 		:param str time
@@ -26,6 +26,11 @@ class Timing:
 		delay_sec = 0
 		h, m, s = ('', '', '')
 		timeList = []
+
+		# Check for non allowed delimeter
+		if re.match(re.compile(), time):
+			
+
 		dash_delimeter = True if '-' in time else False
 		colon_delimeter = True if ':' in time else False
 		no_delimeter = not dash_delimeter and not colon_delimeter
@@ -81,6 +86,7 @@ class Automate(Timing):
 		self.urls = urls
 		self.urls_with_res = urls_with_res
 	
+
 	def __playList(self, urls: tuple or list) -> list:
 		"""Private method for converting (tuple or list) or nested tuple of videos into list.
 
@@ -92,8 +98,7 @@ class Automate(Timing):
         """
 
 		collections = []
-		if not isinstance(urls, list) or isinstance(urls, tuple): # non tuple or list detection
-			raise NonDigitIndexedError("only tuple and list allowed")
+
 		for url in urls:
 			if isinstance(url, tuple) or isinstance(url, list):
 				for nested in url:
@@ -113,6 +118,86 @@ class Automate(Timing):
 		elif platform.system() == 'Darwin':
 			os.system('shutdown -h now') # notice that you have root privileges
 
+	def info(self, fmt: str = 'json'):
+		"""Method for giving some useful information about the playlist(videos, audios)
+
+		:param str fmt
+			String ftm (format) controls the return type by default is json and other
+			available format is yaml
+
+		:rtype: yaml or json
+		"""
+
+		#check if either self.urls_with_res or self.urls is empty to raise EmptyLookUpListError
+		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
+			raise EmptyLookUpListError("List or dict of videos can not be empty")
+
+		found = []
+
+		# process for dict - self.urls_with_res
+		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+				youtube = YouTube(dict_url)
+
+				available_resolution = [
+					i.resolution for i in youtube.streams.filter(
+						progressive=True, subtype="mp4"
+					).order_by("resolution").asc()
+				]
+
+				vid_type = youtube.streams.get_by_resolution(dict_res)
+				filesize = youtube.streams.get_by_resolution(dict_res)
+
+				found.append({
+					'watch_url': dict_url,
+					'video_id': youtube.video_id,
+					'title': youtube.title,
+					'thumbnail_url': youtube.thumbnail_url,
+					'author': youtube.author,
+					'publish_date': str(youtube.publish_date.date()),
+					'type': vid_type.mime_type if vid_type else youtube.streams.get_highest_resolution().mime_type,
+					'filesize': filesize.filesize if filesize else youtube.streams.get_highest_resolution().filesize,
+					'available_resolution': available_resolution,
+					'highest_resolution': youtube.streams.get_highest_resolution().resolution,
+					'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
+					'views': "{:,}".format(youtube.views),
+					'rating': round(youtube.rating, 1),
+					'age_restricted': youtube.age_restricted
+				})
+
+		# process for list or tuple - self.urls
+		for url in self.__playList(self.urls):
+			youtube = YouTube(url)
+
+			available_resolution = [
+				i.resolution for i in youtube.streams.filter(
+					progressive=True, subtype="mp4"
+				).order_by("resolution").asc()
+			]
+
+			found.append({
+				'watch_url': url,
+				'video_id': youtube.video_id,
+				'title': youtube.title,
+				'thumbnail_url': youtube.thumbnail_url,
+				'author': youtube.author,
+				'publish_date': str(youtube.publish_date.date()),
+				'type': youtube.streams.get_highest_resolution().mime_type,
+				'filesize': youtube.streams.get_highest_resolution().filesize,
+				'available_resolution': available_resolution,
+				'highest_resolution': youtube.streams.get_highest_resolution().resolution,
+				'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
+				'views': "{:,}".format(youtube.views),
+				'rating': round(youtube.rating, 1),
+				'age_restricted': youtube.age_restricted
+			})
+
+		if fmt == 'json':
+			return __import__('json').dumps(found, indent=4)
+		elif fmt == 'yaml':
+			return __import__('yaml').dump(found, indent=4)
+
+
 	def download(
 		self,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
@@ -120,7 +205,7 @@ class Automate(Timing):
 		lowest_res: bool = False,
 		subtitle: bool = False,
 		shutdown: bool = False
-	) -> None:
+	):
 		"""Method for automating the downloading of YouTube videos or audios
 
 		:param str location
@@ -142,40 +227,42 @@ class Automate(Timing):
 
         """	
 
-		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
-			raise PlayListError("List or dict of videos can not be empty")
+		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
+			raise EmptyLookUpListError("List or dict of videos can not be empty")
 		if not os.path.exists(location):
-			raise LocationError("provided location (path) doesn't exists")
+			raise NonExistLocationError("provided location (path) doesn't exists")
 
 		if highest_res:
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
-		
-		if len(self.urls_with_res.keys()) > 0:
-			for video, resolution in self.urls_with_res['urls_with_res'].items():
-				youtube = YouTube(video.strip())
+
+		# process for dict - self.urls_with_res
+		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+				youtube = YouTube(dict_url.strip())
 				if youtube.streams:
-					if not youtube.streams.filter(progressive=True, res=resolution.strip()):
+					if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
 						youtube.streams.get_highest_resolution().download(location)
 					else:
-						youtube.streams.get_by_resolution(resolution.strip()).download(location)
+						youtube.streams.get_by_resolution(dict_res.strip()).download(location)
+
+		# process for list or tuple - self.urls
 		if len(self.urls) > 0:
 			playList = self.__playList(self.urls)
-		for url in playList:
-			youtube = YouTube(url.strip())
-			if highest_res and not lowest_res:
-				if youtube.streams:
-					youtube.streams.get_highest_resolution().download(location)
-			elif lowest_res and not highest_res:
-				if youtube.streams:
-					youtube.streams.get_lowest_resolution().download(location)
-			else:
-				raise ResolutionError("Neither highest nor lowest resolution specified")
+			for url in playList:
+				youtube = YouTube(url.strip())
+				if highest_res and not lowest_res:
+					if youtube.streams:
+						youtube.streams.get_highest_resolution().download(location)
+				elif lowest_res and not highest_res:
+					if youtube.streams:
+						youtube.streams.get_lowest_resolution().download(location)
+				else:
+					raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 
 		if subtitle:
 			self.download_subtitle(location=location)
-
 
 	def download_subtitle(
 		self,
@@ -183,7 +270,7 @@ class Automate(Timing):
 		auto_generated: bool = True,
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
 		shutdown: bool = False
-	) -> None:
+	):
 		"""Method for automating the downloading of YouTube video's subtitles
 		
 		:param str lang_code
@@ -204,12 +291,25 @@ class Automate(Timing):
 
 		"""
 
-		if len(self.urls_with_res.keys()) == 0 and len(self.urls) == 0:
-			raise PlayListError("List or dict of videos can not be empty")
+		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
+			raise EmptyLookUpListError("List or dict of videos can not be empty")
 
 		if not os.path.exists(location):
-			raise LocationError("provided location (path) doesn't exists")
+			raise NonExistLocationError("provided location (path) doesn't exists")
 
+		# process for dict - self.urls_with_res
+		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+				youtube = YouTube(dict_url.strip())
+				if youtube.captions.__len__() > 0:
+					if youtube.captions[lang_code].code == lang_code:
+						youtube.captions[lang_code].download(youtube.title, output_path=location)
+				elif auto_generated:
+					if youtube.captions[lang_code].code == f"a.{lang_code}":
+						lang_code = f"a.{lang_code}"
+						youtube.captions[lang_code].download(youtube.title, output_path=location)
+
+		# process for list or tuple - self.urls
 		for url in self.__playList(self.urls):
 			youtube = YouTube(url)
 			if youtube.captions.__len__() > 0:
