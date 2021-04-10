@@ -13,7 +13,7 @@ class Timing:
 	"""class for converting string time looks like (2h:30m, 2h30m, or 2h-30m) into seconds"""
 
 	def after(self, time: str):
-		"""Method for converting hours, minutes, seconds into seconds.
+		"""Method for converting human readable time (2h:30m) into seconds.
 		
 		:param str time
 			string time for delaying which written in human readable format - ex.
@@ -75,7 +75,7 @@ class Automate(Timing):
             valid list or tuple of YouTube watch URLs.
 
         :param dict urls_with_res:
-            dict where keys are valid YouTube watch URLs and values are valid resolutions.
+            dict where keys are valid YouTube watch URLs and values are valid video resolutions.
 
         """
 
@@ -132,11 +132,11 @@ class Automate(Timing):
 				raise NonExistLocationError("provided location (path) doesn't exists")
 
 	def info(self, fmt: str = 'json'):
-		"""Method for giving some useful information about the playlist(videos, audios)
+		"""Method for giving some useful information about the videos or audios
 
 		:param str fmt
-			String ftm (format) controls the return type by default is json and other
-			available format is yaml
+			String ftm (format) controls the return type by default is `json` and other
+			available format is `yaml`
 
 		:rtype: yaml or json
 		"""
@@ -156,7 +156,7 @@ class Automate(Timing):
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
 			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				youtube = YouTube(dict_url)
+				youtube = YouTube(dict_url.strip())
 
 				available_resolution = [
 					i.resolution for i in youtube.streams.filter(
@@ -216,6 +216,25 @@ class Automate(Timing):
 		elif fmt == 'yaml':
 			return __import__('yaml').dump(found, indent=4)
 
+	def generate_watch_url_from_playlist(self) -> list:
+		"""Method for generating watch_url from playlist"""
+
+		self.__check_availabilty()
+
+		watch_url = []
+
+		# process for dict - self.urls_with_res
+		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+			for dict_url in self.urls_with_res['urls_with_res'].keys():
+				for playlist_dict_url in Playlist(dict_url.strip()).video_urls:
+					watch_url.append(playlist_dict_url)
+
+		# process for list or tuple - self.urls
+		for url in self.__playList(self.urls):
+			for playlist_url in Playlist(url).video_urls:
+				watch_url.append(playlist_url)
+
+		return watch_url
 
 	def download(
 		self,
@@ -225,10 +244,10 @@ class Automate(Timing):
 		subtitle: bool = False,
 		shutdown: bool = False
 	):
-		"""Method for automating the downloading of YouTube videos or audios
+		"""Method for automating the downloading of YouTube videos
 
 		:param str location
-			location on your computer to save the downloads, by default is in Downloads
+			location path on your computer to save the downloads, by default is in Downloads
 
 		:param bool highest_res
 			if highest_res is True the script gets the highest resolution available
@@ -237,7 +256,7 @@ class Automate(Timing):
 			if lowest_res is True the script gets the lowest resolution available
 
 		:param bool subtitle
-			if subtitle is True english version or english auto generated subtitle is downloaded  
+			if subtitle is True english version or english auto generated subtitle is downloaded within its video
 
 		:param bool shutdown
             if shutdown is True the computer shuts down after downloads is completely done
@@ -257,26 +276,40 @@ class Automate(Timing):
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
 			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				youtube = YouTube(dict_url.strip())
-				if youtube.streams:
-					if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
-						youtube.streams.get_highest_resolution().download(location)
-					else:
-						youtube.streams.get_by_resolution(dict_res.strip()).download(location)
+				if 'watch' in dict_url.strip():
+					youtube = YouTube(dict_url.strip())
+					if youtube.streams:
+						if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
+							youtube.streams.get_highest_resolution().download(location)
+						else:
+							youtube.streams.get_by_resolution(dict_res.strip()).download(location)
+				else:
+					self.download_playlist(
+						location=location,
+						highest_res=highest_res,
+						lowest_res=lowest_res
+					)
+					
 
 		# process for list or tuple - self.urls
 		if len(self.urls) > 0:
-			playList = self.__playList(self.urls)
-			for url in playList:
-				youtube = YouTube(url.strip())
-				if highest_res and not lowest_res:
-					if youtube.streams:
-						youtube.streams.get_highest_resolution().download(location)
-				elif lowest_res and not highest_res:
-					if youtube.streams:
-						youtube.streams.get_lowest_resolution().download(location)
+			for url in self.__playList(self.urls):
+				if 'watch' in playlist:
+					youtube = YouTube(url)
+					if highest_res and not lowest_res:
+						if youtube.streams:
+							youtube.streams.get_highest_resolution().download(location)
+					elif lowest_res and not highest_res:
+						if youtube.streams:
+							youtube.streams.get_lowest_resolution().download(location)
+					else:
+						raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 				else:
-					raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
+					self.download_playlist(
+						location=location,
+						highest_res=highest_res,
+						lowest_res=lowest_res
+					)
 
 		if subtitle:
 			self.download_subtitle(location=location)
@@ -317,25 +350,47 @@ class Automate(Timing):
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
 			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				youtube = YouTube(dict_url.strip())
-				if youtube.captions.__len__() > 0:
-					if youtube.captions[lang_code].code == lang_code:
-						youtube.captions[lang_code].download(youtube.title, output_path=location)
-				elif auto_generated:
-					if youtube.captions[lang_code].code == f"a.{lang_code}":
-						lang_code = f"a.{lang_code}"
-						youtube.captions[lang_code].download(youtube.title, output_path=location)
+				if 'watch' in dict_url:
+					youtube = YouTube(dict_url.strip())
+					if youtube.captions.__len__() > 0:
+						if youtube.captions[lang_code].code == lang_code:
+							youtube.captions[lang_code].download(youtube.title, output_path=location)
+					elif auto_generated:
+						if youtube.captions[lang_code].code == f"a.{lang_code}":
+							lang_code = f"a.{lang_code}"
+							youtube.captions[lang_code].download(youtube.title, output_path=location)
+				else:
+					for watch_url in self.generate_watch_url_from_playlist():
+						youtube = YouTube(watch_url)
+						if youtube.captions.__len__() > 0:
+							if youtube.captions[lang_code].code == lang_code:
+								youtube.captions[lang_code].download(youtube.title, output_path=location)
+						elif auto_generated:
+							if youtube.captions[lang_code].code == f"a.{lang_code}":
+								lang_code = f"a.{lang_code}"
+								youtube.captions[lang_code].download(youtube.title, output_path=location)
 
 		# process for list or tuple - self.urls
 		for url in self.__playList(self.urls):
-			youtube = YouTube(url)
-			if youtube.captions.__len__() > 0:
-				if youtube.captions[lang_code].code == lang_code:
-					youtube.captions[lang_code].download(youtube.title, output_path=location)
-				elif auto_generated:
-					if youtube.captions[lang_code].code == f"a.{lang_code}":
-						lang_code = f"a.{lang_code}"
+			if 'watch' in url:
+				youtube = YouTube(url)
+				if youtube.captions.__len__() > 0:
+					if youtube.captions[lang_code].code == lang_code:
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
+					elif auto_generated:
+						if youtube.captions[lang_code].code == f"a.{lang_code}":
+							lang_code = f"a.{lang_code}"
+							youtube.captions[lang_code].download(youtube.title, output_path=location)
+			else:
+				for watch_url in self.generate_watch_url_from_playlist():
+					youtube = YouTube(watch_url)
+					if youtube.captions.__len__() > 0:
+						if youtube.captions[lang_code].code == lang_code:
+							youtube.captions[lang_code].download(youtube.title, output_path=location)
+						elif auto_generated:
+							if youtube.captions[lang_code].code == f"a.{lang_code}":
+								lang_code = f"a.{lang_code}"
+								youtube.captions[lang_code].download(youtube.title, output_path=location)
 
 		if shutdown:
 			self.shutdown()
@@ -361,7 +416,10 @@ class Automate(Timing):
 			if lowest_res is True the script gets the lowest resolution available
 
 		:param int max_count
-			integer max_count limits the number of the videos or audios to be downloaded
+			integer max_count limits the number of the videos to be downloaded
+
+		:param bool subtitle
+			if subtitle is True english version or english auto generated subtitle is downloaded within its video
 
 		:param bool shutdown
             if shutdown is True the computer shuts down after downloads is completely done
@@ -372,41 +430,26 @@ class Automate(Timing):
 
 		self.__check_availabilty(location=location)
 
-		# process for dict - self.urls_with_res
-		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				for count, playlist_dict_url in enumerate(Playlist(dict_url.strip()).video_urls, 1):
-					youtube = YouTube(playlist_dict_url.strip())
-
-					if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
-						youtube.streams.get_highest_resolution().download(location)
-					else:
-						youtube.streams.get_by_resolution(dict_res.strip()).download(location)
-					
-					# termimates if count is equal to the max_count
-					if count == max_count: break
-
 		if highest_res:
 			lowest_res = False
 		elif lowest_res:
 			highest_res = False
 
-		# process for list or tuple - self.urls
-		for url in self.__playList(self.urls):
-			for count, playlist_url in enumerate(Playlist(url).video_urls, 1):
-				youtube = YouTube(playlist_url.strip())
+		# loop through list of watch url generated from playlist and download untill max_count breaks it
+		for url in self.generate_watch_url_from_playlist():
+			youtube = YouTube(url)
 
-				if highest_res and not lowest_res:
-					if youtube.streams:
-						youtube.streams.get_highest_resolution().download(location)
-				elif lowest_res and not highest_res:
-					if youtube.streams:
-						youtube.streams.get_lowest_resolution().download(location)
-				else:
-					raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
+			if highest_res and not lowest_res:
+				if youtube.streams:
+					youtube.streams.get_highest_resolution().download(location)
+			elif lowest_res and not highest_res:
+				if youtube.streams:
+					youtube.streams.get_lowest_resolution().download(location)
+			else:
+				raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 
-				# termimates if count is equal to the max_count
-				if count == max_count: break
+			# termimates if count is equal to the max_count
+			if count == max_count: break
 
 		if subtitle:
 			self.download_subtitle(location=location)
