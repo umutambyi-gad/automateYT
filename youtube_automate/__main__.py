@@ -2,6 +2,7 @@ from pytube import YouTube
 from pytube import Playlist
 import os
 import platform
+import re
 from .exceptions import (
 	EmptyLookUpListError,
 	ResolutionAbsenceError,
@@ -27,13 +28,19 @@ class Timing:
 		h, m, s = ('', '', '')
 		timeList = []
 
+		# sanitizing time string so far
+		time = re.match(
+			re.compile("(\\d+[h]{1}[-,:]?)?(\\d+[m]{1}[-,:]?)?(\\d+[s]{1}[-,:]?)?"),
+			time
+		).group()
+
 		dash_delimeter = True if '-' in time else False # check for the `-` delimeter
 		colon_delimeter = True if ':' in time else False # check for the `:` delimeter
 		no_delimeter = not dash_delimeter and not colon_delimeter # assume to be no delimeter
 
 		if dash_delimeter and not colon_delimeter:
 			timeList = [i for i in time.split('-') if i]
-			
+
 		elif colon_delimeter and not dash_delimeter:
 			timeList = [i for i in time.split(':') if i]
 
@@ -111,7 +118,6 @@ class Automate(Timing):
 				collections.append(url.strip())
 		return [*{*collections}] # removing dublicates
 
-
 	def shutdown(self):
 		"""Method for shutting down the computer using API command"""
 
@@ -134,10 +140,20 @@ class Automate(Timing):
 		:rtype: None
 		"""
 
-		# check if urls_with_res and url are empty and raise an error
-		if len(self.urls_with_res['urls_with_res'].keys()) == 0 and len(self.urls) == 0:
-			raise EmptyLookUpListError("List or dict of videos can not be empty")
+		if isinstance(self.urls, tuple) and len(self.urls) > 0:
+			if type(self.urls[0]) not in (tuple, list, str):
+				raise TypeError(f'tuple, list or string were expected but {type(self.urls[0]).__name__} was given')
 
+		if len(self.urls_with_res) > 0:
+			if not isinstance(self.urls_with_res['urls_with_res'], dict):
+				val = self.urls_with_res['urls_with_res']
+				raise TypeError(f'dict were expected but {type(val).__name__} was given')
+
+		# check if urls_with_res and url are empty and raise an error
+		if len(self.urls) == 0:
+			if len(self.urls_with_res['urls_with_res'].keys()) == 0:
+				raise EmptyLookUpListError("List or dict of (videos or audios) to access can not be empty")
+			 
 		# check if provided location path is available otherwise raise an error
 		if location is not None:
 			if not os.path.exists(location):
@@ -170,35 +186,36 @@ class Automate(Timing):
 		found = []
 
 		# process for dict - self.urls_with_res
-		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				youtube = YouTube(dict_url.strip())
+		if len(self.urls_with_res) > 0:
+			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+					youtube = YouTube(dict_url.strip())
 
-				available_resolution = [
-					i.resolution for i in youtube.streams.filter(
-						progressive=True, subtype="mp4"
-					).order_by("resolution").asc()
-				]
+					available_resolution = [
+						i.resolution for i in youtube.streams.filter(
+							progressive=True, subtype="mp4"
+						).order_by("resolution").asc()
+					]
 
-				vid_type = youtube.streams.get_by_resolution(dict_res)
-				filesize = youtube.streams.get_by_resolution(dict_res)
+					vid_type = youtube.streams.get_by_resolution(dict_res)
+					filesize = youtube.streams.get_by_resolution(dict_res)
 
-				found.append({
-					'watch_url': dict_url,
-					'video_id': youtube.video_id,
-					'title': youtube.title,
-					'thumbnail_url': youtube.thumbnail_url,
-					'author': youtube.author,
-					'publish_date': str(youtube.publish_date.date()),
-					'type': vid_type.mime_type if vid_type else youtube.streams.get_highest_resolution().mime_type,
-					'filesize': size_fmt(filesize.filesize) if filesize else size_fmt(youtube.streams.get_highest_resolution().filesize),
-					'available_resolution': available_resolution,
-					'highest_resolution': youtube.streams.get_highest_resolution().resolution,
-					'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
-					'views': "{:,}".format(youtube.views),
-					'rating': round(youtube.rating, 1),
-					'age_restricted': youtube.age_restricted
-				})
+					found.append({
+						'watch_url': dict_url,
+						'video_id': youtube.video_id,
+						'title': youtube.title,
+						'thumbnail_url': youtube.thumbnail_url,
+						'author': youtube.author,
+						'publish_date': str(youtube.publish_date.date()),
+						'type': vid_type.mime_type if vid_type else youtube.streams.get_highest_resolution().mime_type,
+						'filesize': size_fmt(filesize.filesize) if filesize else size_fmt(youtube.streams.get_highest_resolution().filesize),
+						'available_resolution': available_resolution,
+						'highest_resolution': youtube.streams.get_highest_resolution().resolution,
+						'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
+						'views': "{:,}".format(youtube.views),
+						'rating': round(youtube.rating, 1),
+						'age_restricted': youtube.age_restricted
+					})
 
 		# process for list or tuple - self.urls
 		for url in self.__playList(self.urls):
@@ -244,10 +261,11 @@ class Automate(Timing):
 		watch_url = []
 
 		# process for dict - self.urls_with_res
-		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-			for dict_url in self.urls_with_res['urls_with_res'].keys():
-				for playlist_dict_url in Playlist(dict_url.strip()).video_urls:
-					watch_url.append(playlist_dict_url)
+		if len(self.urls_with_res) > 0:
+			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+				for dict_url in self.urls_with_res['urls_with_res'].keys():
+					for playlist_dict_url in Playlist(dict_url.strip()).video_urls:
+						watch_url.append(playlist_dict_url)
 
 		# process for list or tuple - self.urls
 		for url in self.__playList(self.urls):
@@ -279,11 +297,11 @@ class Automate(Timing):
 			if subtitle is True english version or english auto generated subtitle is downloaded within its video
 
 		:param: bool shutdown
-            if shutdown is True the computer shuts down after downloads is completely done
+			if shutdown is True the computer shuts down after downloads is completely done
+		
+		:rtype: None
 
-        :rtype: None
-
-        """	
+		"""
 
 		# check for requirements
 		self.__check_availabilty(location=location)
@@ -295,27 +313,28 @@ class Automate(Timing):
 			highest_res = False
 
 		# process for dict - self.urls_with_res
-		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				# assumes that if whatch is url that url is ready to go
-				if 'watch' in dict_url.strip():
-					youtube = YouTube(dict_url.strip())
+		if len(self.urls_with_res) > 0:
+			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+					# assumes that if whatch is url that url is ready to go
+					if 'watch' in dict_url.strip():
+						youtube = YouTube(dict_url.strip())
 
-					if youtube.streams:
-						# get highest resolution due to unvailability of requested resolution
-						if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
-							youtube.streams.get_highest_resolution().download(location)
+						if youtube.streams:
+							# get highest resolution due to unvailability of requested resolution
+							if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
+								youtube.streams.get_highest_resolution().download(location)
 
-						else:
-							youtube.streams.get_by_resolution(dict_res.strip()).download(location)
+							else:
+								youtube.streams.get_by_resolution(dict_res.strip()).download(location)
 
-				# assumes that if there isn't watch in url that url could be playlist url
-				else:
-					self.download_playlist(
-						location=location,
-						highest_res=highest_res,
-						lowest_res=lowest_res
-					)
+					# assumes that if there isn't watch in url that url could be playlist url
+					else:
+						self.download_playlist(
+							location=location,
+							highest_res=highest_res,
+							lowest_res=lowest_res
+						)
 					
 
 		# process for list or tuple - self.urls
@@ -370,10 +389,10 @@ class Automate(Timing):
 		:param: str location
 			location on your computer to save the downloads, by default is in Downloads
 
-		:param: bool shutdown
-            if shutdown is True the computer shuts down after downloads is completely done
+		:param: bool shutdown 
+			if shutdown is True the computer shuts down after downloads is completely done
 
-        :rtype: None
+		:rtype: None
 
 		"""
 
@@ -381,35 +400,36 @@ class Automate(Timing):
 		self.__check_availabilty(location=location)
 
 		# process for dict - self.urls_with_res
-		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
-				# assumes that if whatch is url that url is ready to go
-				if 'watch' in dict_url:
-					youtube = YouTube(dict_url.strip())
-
-					if youtube.captions.__len__() > 0:
-						if youtube.captions[lang_code].code == lang_code:
-							youtube.captions[lang_code].download(youtube.title, output_path=location)
-
-					# get auto_generated version of requested one
-					elif auto_generated:
-						if youtube.captions[lang_code].code == f"a.{lang_code}":
-							lang_code = f"a.{lang_code}"
-							youtube.captions[lang_code].download(youtube.title, output_path=location)
-
-				# assumes that if there isn't watch in url that url could be playlist url
-				else:
-					for watch_url in self.generate_watch_url_from_playlist():
-						youtube = YouTube(watch_url)
+		if len(self.urls_with_res) > 0:
+			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+					# assumes that if whatch is url that url is ready to go
+					if 'watch' in dict_url:
+						youtube = YouTube(dict_url.strip())
 
 						if youtube.captions.__len__() > 0:
 							if youtube.captions[lang_code].code == lang_code:
 								youtube.captions[lang_code].download(youtube.title, output_path=location)
+
 						# get auto_generated version of requested one
 						elif auto_generated:
 							if youtube.captions[lang_code].code == f"a.{lang_code}":
 								lang_code = f"a.{lang_code}"
 								youtube.captions[lang_code].download(youtube.title, output_path=location)
+
+					# assumes that if there isn't watch in url that url could be playlist url
+					else:
+						for watch_url in self.generate_watch_url_from_playlist():
+							youtube = YouTube(watch_url)
+
+							if youtube.captions.__len__() > 0:
+								if youtube.captions[lang_code].code == lang_code:
+									youtube.captions[lang_code].download(youtube.title, output_path=location)
+							# get auto_generated version of requested one
+							elif auto_generated:
+								if youtube.captions[lang_code].code == f"a.{lang_code}":
+									lang_code = f"a.{lang_code}"
+									youtube.captions[lang_code].download(youtube.title, output_path=location)
 
 		# process for list or tuple - self.urls
 		for url in self.__playList(self.urls):
@@ -469,7 +489,7 @@ class Automate(Timing):
 			if subtitle is True english version or english auto generated subtitle is downloaded within its video
 
 		:param: bool shutdown
-            if shutdown is True the computer shuts down after downloads is completely done
+			if shutdown is True the computer shuts down after downloads is completely done 
 
 		:rtype: None
 
