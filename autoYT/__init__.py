@@ -2,10 +2,12 @@
 Python library for automating downloading YouTube Videos.
 """
 
-__title__ = "automate"
+__title__ = "autoYT"
 __author__ = "Umutambyi Gad"
 __copyright__ = "Copyright 2021 by Umutambyi Gad"
+__license__ = 'MIT license'
+__version__ = 'v1.0.0'
+
 
 from .__main__ import Automate
 from .__main__ import Timing
-
