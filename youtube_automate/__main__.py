@@ -1,4 +1,5 @@
 from pytube import YouTube
+from pytube import Playlist
 import os
 import platform
 from .exceptions import (
@@ -280,6 +281,9 @@ class Automate(Timing):
 		if subtitle:
 			self.download_subtitle(location=location)
 
+		if shutdown:
+			self.shutdown()
+
 	def download_subtitle(
 		self,
 		lang_code: str = 'en',
@@ -333,3 +337,79 @@ class Automate(Timing):
 						lang_code = f"a.{lang_code}"
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
 
+		if shutdown:
+			self.shutdown()
+
+	def download_playlist(
+		self,
+		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'),
+		highest_res: bool = True,
+		lowest_res: bool = False,
+		max_count: int = 25,
+		subtitle: bool = False,
+		shutdown: bool = False
+	):
+		"""Method to download youtube playlist
+
+		:param str location
+			location on your computer to save the downloads, by default is in Downloads
+
+		:param bool highest_res
+			if highest_res is True the script gets the highest resolution available
+
+		:param bool lowest_res
+			if lowest_res is True the script gets the lowest resolution available
+
+		:param int max_count
+			integer max_count limits the number of the videos or audios to be downloaded
+
+		:param bool shutdown
+            if shutdown is True the computer shuts down after downloads is completely done
+
+		:rtype None
+
+		"""
+
+		self.__check_availabilty(location=location)
+
+		# process for dict - self.urls_with_res
+		if len(self.urls_with_res['urls_with_res'].keys()) > 0:
+			for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+				for count, playlist_dict_url in enumerate(Playlist(dict_url.strip()).video_urls, 1):
+					youtube = YouTube(playlist_dict_url.strip())
+
+					if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
+						youtube.streams.get_highest_resolution().download(location)
+					else:
+						youtube.streams.get_by_resolution(dict_res.strip()).download(location)
+					
+					# termimates if count is equal to the max_count
+					if count == max_count: break
+
+		if highest_res:
+			lowest_res = False
+		elif lowest_res:
+			highest_res = False
+
+		# process for list or tuple - self.urls
+		for url in self.__playList(self.urls):
+			for count, playlist_url in enumerate(Playlist(url).video_urls, 1):
+				youtube = YouTube(playlist_url.strip())
+
+				if highest_res and not lowest_res:
+					if youtube.streams:
+						youtube.streams.get_highest_resolution().download(location)
+				elif lowest_res and not highest_res:
+					if youtube.streams:
+						youtube.streams.get_lowest_resolution().download(location)
+				else:
+					raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
+
+				# termimates if count is equal to the max_count
+				if count == max_count: break
+
+		if subtitle:
+			self.download_subtitle(location=location)
+
+		if shutdown:
+			self.shutdown()
