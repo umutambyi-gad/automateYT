@@ -95,7 +95,11 @@ class Automate(Timing):
 
 		self.urls = urls
 		self.urls_with_res = urls_with_res
-	
+		
+	def __get(self) -> str:
+		"""Private method for getting key name passed in the constructor - ``urls_with_res``"""
+
+		if len(self.urls_with_res) > 0: return [*self.urls_with_res.keys()][0]
 
 	def __playList(self, urls: tuple or list) -> list:
 		"""Private method for converting (tuple or list) or nested tuple of videos into list.
@@ -145,19 +149,26 @@ class Automate(Timing):
 				raise TypeError(f'tuple, list or string were expected but {type(self.urls[0]).__name__} was given')
 
 		if len(self.urls_with_res) > 0:
-			if not isinstance(self.urls_with_res['urls_with_res'], dict):
-				val = self.urls_with_res['urls_with_res']
+			if not isinstance(self.urls_with_res[self.__get()], dict):
+				val = self.urls_with_res[self.__get()]
 				raise TypeError(f'dict were expected but {type(val).__name__} was given')
 
 		# check if urls_with_res and url are empty and raise an error
-		if len(self.urls) == 0:
-			if len(self.urls_with_res['urls_with_res'].keys()) == 0:
+		if len(self.urls) == 0 and len(self.urls_with_res) == 0:
+			raise EmptyLookUpListError("List or dict of (videos or audios) to access can not be empty")
+
+		# check if urls_with_res values and url are empty and raise an error
+		if len(self.urls) == 0 and len(self.urls_with_res) > 0:
+			if len(self.urls_with_res[self.__get()].keys()) == 0:
 				raise EmptyLookUpListError("List or dict of (videos or audios) to access can not be empty")
 			 
 		# check if provided location path is available otherwise raise an error
 		if location is not None:
 			if not os.path.exists(location):
 				raise NonExistLocationError("provided location (path) doesn't exists")
+
+	def check(self):
+		self.__check_availabilty()
 
 	def info(self, fmt: str = 'json'):
 		"""Method for giving some useful information about the videos or audios
@@ -187,8 +198,8 @@ class Automate(Timing):
 
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res) > 0:
-			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+			if len(self.urls_with_res[self.__get()].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res[self.__get()].items():
 					youtube = YouTube(dict_url.strip())
 
 					available_resolution = [
@@ -262,8 +273,8 @@ class Automate(Timing):
 
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res) > 0:
-			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-				for dict_url in self.urls_with_res['urls_with_res'].keys():
+			if len(self.urls_with_res[self.__get()].keys()) > 0:
+				for dict_url in self.urls_with_res[self.__get()].keys():
 					for playlist_dict_url in Playlist(dict_url.strip()).video_urls:
 						watch_url.append(playlist_dict_url)
 
@@ -314,8 +325,8 @@ class Automate(Timing):
 
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res) > 0:
-			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+			if len(self.urls_with_res[self.__get()].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res[self.__get()].items():
 					# assumes that if whatch is url that url is ready to go
 					if 'watch' in dict_url.strip():
 						youtube = YouTube(dict_url.strip())
@@ -401,8 +412,8 @@ class Automate(Timing):
 
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res) > 0:
-			if len(self.urls_with_res['urls_with_res'].keys()) > 0:
-				for dict_url, dict_res in self.urls_with_res['urls_with_res'].items():
+			if len(self.urls_with_res[self.__get()].keys()) > 0:
+				for dict_url, dict_res in self.urls_with_res[self.__get()].items():
 					# assumes that if whatch is url that url is ready to go
 					if 'watch' in dict_url:
 						youtube = YouTube(dict_url.strip())
