@@ -536,3 +536,28 @@ class Automate(Timing):
 
 		if shutdown:
 			self.shutdown()
+
+	def __len__(self) -> int:
+		total = len(self.__playList(self.urls))
+
+		if len(self.urls_with_res) > 0:
+			total += len(self.urls_with_res[self.__get()])
+
+		return total
+
+	def __repr__(self) -> str:
+		"""Printable object representation.
+
+		:rtype: str
+		"""
+
+		# get json from list urls
+		urls = __import__('json').dumps(self.__playList(self.urls), indent=4)
+
+		if len(self.urls_with_res) > 0:
+			# get json from dict urls_with_res
+			urls_with_res = __import__('json').dumps(self.urls_with_res[self.__get()], indent=4)
+		else:
+			urls_with_res = self.urls_with_res
+
+		return f"<Automate urls=\"{urls}\", urls_with_res=\"{urls_with_res}\">\n"
