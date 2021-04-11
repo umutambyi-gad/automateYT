@@ -291,7 +291,8 @@ class Automate(Timing):
 		highest_res: bool = True,
 		lowest_res: bool = False,
 		subtitle: bool = False,
-		shutdown: bool = False
+		shutdown: bool = False,
+		only_audio: bool = False
 	):
 		"""Method for automating the downloading of YouTube videos
 
@@ -309,6 +310,9 @@ class Automate(Timing):
 
 		:param: bool shutdown
 			if shutdown is True the computer shuts down after downloads is completely done
+
+		:param: bool only_audio
+			if only_audio is True audio only is downloaded
 		
 		:rtype: None
 
@@ -333,8 +337,12 @@ class Automate(Timing):
 
 						if youtube.streams:
 							# get highest resolution due to unvailability of requested resolution
-							if not youtube.streams.filter(progressive=True, res=dict_res.strip()):
+							if not only_audio and not youtube.streams.filter(progressive=True, res=dict_res.strip()):
 								youtube.streams.get_highest_resolution().download(location)
+
+							# get audio only if only_audio is True
+							elif only_audio:
+								youtube.streams.filter(only_audio=only_audio).download(location=location)
 
 							else:
 								youtube.streams.get_by_resolution(dict_res.strip()).download(location)
@@ -355,15 +363,20 @@ class Automate(Timing):
 				if 'watch' in playlist:
 					youtube = YouTube(url)
 
-					if highest_res and not lowest_res:
+					if highest_res and not lowest_res and only_audio:
 						if youtube.streams:
 							youtube.streams.get_highest_resolution().download(location)
 
-					elif lowest_res and not highest_res:
+					elif lowest_res and not highest_res and only_audio:
 						if youtube.streams:
 							youtube.streams.get_lowest_resolution().download(location)
 
-					else:
+					# get audio only if only_audio is True
+					elif only_audio:
+						youtube.streams.filter(only_audio=only_audio).download(location=location)
+
+					# raise ResolutionAbsenceError error when neither highest nor lowest and not only_audio (is true)
+					elif not only_audio and not highest_res and not lowest_res:
 						raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 
 				# assumes that if there isn't watch in url that url could be playlist url
