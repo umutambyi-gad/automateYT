@@ -568,6 +568,8 @@ class Automate(Timing):
 		urls = __import__('json').dumps(self.__playList(self.urls), indent=4)
 
 		if len(self.urls_with_res) > 0:
+			self.__check_availabilty()
+			
 			# get json from dict urls_with_res
 			urls_with_res = __import__('json').dumps(self.urls_with_res[self.__get()], indent=4)
 		else:
