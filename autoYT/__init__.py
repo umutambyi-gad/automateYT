@@ -9,5 +9,5 @@ __license__ = 'MIT license'
 __version__ = 'v1.0.0'
 
 
-from .__main__ import Automate
-from .__main__ import Timing
+from autoYT.__main__ import Automate
+from autoYT.__main__ import Timing
