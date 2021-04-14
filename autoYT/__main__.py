@@ -3,7 +3,7 @@ from pytube import Playlist
 import os
 import platform
 import re
-from .exceptions import (
+from autoYT.exceptions import (
 	EmptyLookUpListError,
 	ResolutionAbsenceError,
 	NonExistLocationError
@@ -166,9 +166,6 @@ class Automate(Timing):
 		if location is not None:
 			if not os.path.exists(location):
 				raise NonExistLocationError("provided location (path) doesn't exists")
-
-	def check(self):
-		self.__check_availabilty()
 
 	def info(self, fmt: str = 'json'):
 		"""Method for giving some useful information about the videos or audios
