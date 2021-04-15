@@ -524,22 +524,29 @@ class Automate(Timing):
 		elif lowest_res:
 			highest_res = False
 
+		# initialize count to 1
+		count = 0
+
 		# loop through list of watch url generated from playlist and download untill max_count breaks it
 		for url in self.generate_watch_url_from_playlist():
 			youtube = YouTube(url)
 
-			if highest_res and not lowest_res:
+			if highest_res and not lowest_res and not count == max_count:
 				if youtube.streams:
 					youtube.streams.get_highest_resolution().download(location)
 
-			elif lowest_res and not highest_res:
+			elif lowest_res and not highest_res and not count == max_count:
 				if youtube.streams:
 					youtube.streams.get_lowest_resolution().download(location)
+			
+			# termimates if count is equal to the max_count
+			elif count == max_count:
+				break
+
 			else:
 				raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 
-			# termimates if count is equal to the max_count
-			if count == max_count: break
+			count += 1
 
 		if subtitle:
 			self.download_subtitle(location=location)
