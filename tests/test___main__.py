@@ -173,7 +173,7 @@ class TestMain:
 	def test_download_subtitle(self):
 		auto = Automate('https://www.youtube.com/watch?v=yg8116aeD7E')
 
-		information = auto.info()
+		information = json.loads(auto.info())[0]
 
 		auto.download_subtitle()
 
