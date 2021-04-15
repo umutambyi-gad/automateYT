@@ -98,4 +98,12 @@ class TestMain:
 		assert all(i in result for i in Automate()._Automate__playList(dummyLookUpList))
 
 
-	
+	def test_delay(self, automate):
+		start = time.perf_counter()
+
+		automate.after('2s')
+
+		end = time.perf_counter()
+		time_ellapsed = math.floor(end - start)
+
+		assert time_ellapsed == 2
