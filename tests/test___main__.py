@@ -37,4 +37,65 @@ class TestMain:
 		assert obj._Automate__get() == result
 
 	
+	@pytest.mark.parametrize(
+		'dummyLookUpList, result',
+		[
+			(
+				[
+					['https://www.youtube.com/watch?v=vFWv44Z4Jhk']
+				],
+					['https://www.youtube.com/watch?v=vFWv44Z4Jhk']
+			),
+
+			(
+				(
+					['https://www.youtube.com/watch?v=aVAKT9UxJMI'],
+				),
+					['https://www.youtube.com/watch?v=aVAKT9UxJMI']
+			),
+
+			(
+				(
+					('https://www.youtube.com/watch?v=k3zimSRKqNw',),
+				),
+					['https://www.youtube.com/watch?v=k3zimSRKqNw']
+			),
+
+			(
+				(
+					(
+						'https://www.youtube.com/watch?v=k3zimSRKqNw',
+						'https://www.youtube.com/watch?v=aVAKT9UxJMI'
+					)
+				),
+					[
+						'https://www.youtube.com/watch?v=k3zimSRKqNw',
+						'https://www.youtube.com/watch?v=aVAKT9UxJMI'
+					]
+			),
+
+			(
+				(
+					(
+						'https://www.youtube.com/watch?v=k3zimSRKqNw',
+						'https://www.youtube.com/watch?v=TB-G1KqRb5o'
+					),
+					[
+						'https://www.youtube.com/watch?v=aVAKT9UxJMI',
+						'https://www.youtube.com/watch?v=CdltAssTMs8'
+					]
+				),
+				[
+					'https://www.youtube.com/watch?v=k3zimSRKqNw',
+					'https://www.youtube.com/watch?v=TB-G1KqRb5o',
+					'https://www.youtube.com/watch?v=aVAKT9UxJMI',
+					'https://www.youtube.com/watch?v=CdltAssTMs8'
+				]
+			)
+		]
+	)
+	def test__playList(self, dummyLookUpList, result):
+		assert all(i in result for i in Automate()._Automate__playList(dummyLookUpList))
+
+
 	
