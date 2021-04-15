@@ -23,3 +23,18 @@ class TestMain:
 		return Automate(urls, urls_with_res=urls_with_res)
 
 	
+	@pytest.mark.parametrize(
+		'obj, result',
+		[
+			(Automate(urls_with_res={}), 'urls_with_res'),
+			(Automate(urls_with_resolution={}), 'urls_with_resolution'),
+			(Automate(watchUrls_with_resolution={}), 'watchUrls_with_resolution'),
+			(Automate(add_resolution={}), 'add_resolution'),
+			(Automate(watchUrls_and_resolution={}), 'watchUrls_and_resolution')
+		]
+	)
+	def test__get(self, obj, result):
+		assert obj._Automate__get() == result
+
+	
+	
