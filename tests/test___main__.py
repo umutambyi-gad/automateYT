@@ -107,3 +107,30 @@ class TestMain:
 		time_ellapsed = math.floor(end - start)
 
 		assert time_ellapsed == 2
+
+
+	def test_info(self):
+		information_in_json = Automate(
+			'https://www.youtube.com/watch?v=XqZsoesa55w'
+		).info()
+
+		information_in_json = json.loads(information_in_json)
+		information_in_json = information_in_json[0]
+
+		assert information_in_json['author'] == "Pinkfong! Kids' Songs & Stories"
+		assert information_in_json['title'] == "Baby Shark Dance | #babyshark Most Viewed Video | Animal Songs | PINKFONG Songs for Children"
+		assert information_in_json['video_id'] == 'XqZsoesa55w'
+		assert information_in_json['publish_date'] == '2016-06-17'
+
+		information_in_yaml = Automate(
+			'https://www.youtube.com/watch?v=F4tHL8reNCs'
+		).info('yaml')
+
+		information_in_yaml = yaml.load(information_in_yaml)
+		information_in_yaml = information_in_yaml[0]
+
+		assert information_in_yaml['author'] == "LooLoo Kids - Nursery Rhymes and Children's Songs"
+		assert information_in_yaml['title'] == "Johny Johny Yes Papa 👶 THE BEST Song for Children | LooLoo Kids"
+		assert information_in_yaml['video_id'] == "F4tHL8reNCs"
+		assert information_in_yaml['publish_date'] == '2016-10-08'
+
