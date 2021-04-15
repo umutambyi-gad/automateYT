@@ -12,3 +12,8 @@ class ResolutionAbsenceError(AutomateError):
 
 class NonExistLocationError(AutomateError):
 	"""Invalid provided location (path doesn't exists)"""
+
+
+class InvalidFormatError(AutomateError):
+	"""Invalid format of output file (neither json or yaml)"""
+
