@@ -357,14 +357,14 @@ class Automate(Timing):
 		if len(self.urls) > 0:
 			for url in self.__playList(self.urls):
 				# assumes that if whatch is url that url is ready to go
-				if 'watch' in playlist:
+				if 'watch' in url:
 					youtube = YouTube(url)
-
-					if highest_res and not lowest_res and only_audio:
+					
+					if highest_res and not lowest_res and not only_audio:
 						if youtube.streams:
 							youtube.streams.get_highest_resolution().download(location)
 
-					elif lowest_res and not highest_res and only_audio:
+					elif lowest_res and not highest_res and not only_audio:
 						if youtube.streams:
 							youtube.streams.get_lowest_resolution().download(location)
 
