@@ -134,3 +134,16 @@ class TestMain:
 		assert information_in_yaml['video_id'] == "F4tHL8reNCs"
 		assert information_in_yaml['publish_date'] == '2016-10-08'
 
+
+	def test_generate_watch_url_from_playlist(self):
+		information = Automate(
+			"https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n"
+		).generate_watch_url_from_playlist()
+
+		assert type(information) == list
+		assert len(information) > 0
+
+		assert 'https://www.youtube.com/watch?v=TB-G1KqRb5o' in information
+		assert 'https://www.youtube.com/watch?v=83Y2qZvWxdE' in information
+		assert 'https://www.youtube.com/watch?v=CdltAssTMs8' in information
+
