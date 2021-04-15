@@ -187,3 +187,54 @@ class TestMain:
 			"https://www.youtube.com/playlist?list=PL9FUXHTBubp-_e0wyNu1jfVVJ2QVAi5NW"
 		).download_playlist(max_count=2)
 
+	
+	@pytest.mark.parametrize(
+		'obj, total',
+		[
+			(
+				Automate(
+					'https://www.youtube.com/watch?v=vFWv44Z4Jhk',
+					'https://www.youtube.com/watch?v=zK3PQ_KY_0s',
+					'https://www.youtube.com/watch?v=Kx68g1rLbbU'
+				),3),
+
+			(Automate(
+				urls_with_res={
+				'https://www.youtube.com/watch?v=TgItkJCm09c': '480p',
+				'https://www.youtube.com/watch?v=y3Z5EuJVFoU': '720p',
+				'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '1080p',
+				'https://www.youtube.com/watch?v=XqZsoesa55w': '720p',
+				}), 4),
+
+			(Automate(
+				(
+					'https://www.youtube.com/watch?v=vFWv44Z4Jhk',
+					'https://www.youtube.com/watch?v=zK3PQ_KY_0s',
+					'https://www.youtube.com/watch?v=Kx68g1rLbbU'
+				),
+				urls_with_res={
+				'https://www.youtube.com/watch?v=TgItkJCm09c': '480p',
+				'https://www.youtube.com/watch?v=y3Z5EuJVFoU': '1080p',
+				'https://www.youtube.com/watch?v=XqZsoesa55w': '720p',
+				}), 6),
+
+			(Automate(
+				'https://www.youtube.com/watch?v=vFWv44Z4Jhk',
+				'https://www.youtube.com/watch?v=zK3PQ_KY_0s',
+				'https://www.youtube.com/watch?v=Kx68g1rLbbU',
+				'https://www.youtube.com/watch?v=TgItkJCm09c',
+				'https://www.youtube.com/watch?v=y3Z5EuJVFoU'
+			), 5),
+
+			(Automate(watchUrls_and_resolution={
+				'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '720p',
+				'https://www.youtube.com/watch?v=zK3PQ_KY_0s': '144p',
+				'https://www.youtube.com/watch?v=Kx68g1rLbbU': '1080p',
+				'https://www.youtube.com/watch?v=TgItkJCm09c': '480p',
+				'https://www.youtube.com/watch?v=y3Z5EuJVFoU': '360p'
+			}), 5)
+		]
+	)
+	def test__len__(self, obj, total):
+		assert obj.__len__() == total
+
