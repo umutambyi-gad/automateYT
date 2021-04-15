@@ -1,6 +1,6 @@
 
-# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudio,sublimetext,vim,linux,windows,macos
-# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,visualstudio,sublimetext,vim,linux,windows,macos
+# Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,visualstudio,sublimetext,virtualenv,vim,linux,macos,windows,test
+# Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vscode,visualstudio,sublimetext,virtualenv,vim,linux,macos,windows,test
 
 ### Linux ###
 *~
@@ -330,6 +330,86 @@ bh_unicode_properties.cache
 # https://packagecontrol.io/packages/sublime-github
 GitHub.sublime-settings
 
+### Test ###
+### Ignore all files that could be used to test your code and
+### you wouldn't want to push
+
+# Reference https://en.wikipedia.org/wiki/Metasyntactic_variable
+
+# Most common
+*foo
+*bar
+*fubar
+*foobar
+*baz
+
+# Less common
+*qux
+*quux
+*bongo
+*bazola
+*ztesch
+
+# UK, Australia
+*wibble
+*wobble
+*wubble
+*flob
+*blep
+*blah
+*boop
+*beep
+
+# Japanese
+*hoge
+*piyo
+*fuga
+*hogera
+*hogehoge
+
+# Portugal, Spain
+*fulano
+*sicrano
+*beltrano
+*mengano
+*perengano
+*zutano
+
+# France, Italy, the Netherlands
+*toto
+*titi
+*tata
+*tutu
+*pipppo
+*pluto
+*paperino
+*aap
+*noot
+*mies
+
+# Other names that would make sense
+*tests
+*testsdir
+*testsfile
+*testsfiles
+*test
+*testdir
+*testfile
+*testfiles
+*testing
+*testingdir
+*testingfile
+*testingfiles
+*temp
+*tempdir
+*tempfile
+*tempfiles
+*tmp
+*tmpdir
+*tmpfile
+*tmpfiles
+*lol
+
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -349,6 +429,27 @@ Sessionx.vim
 tags
 # Persistent undo
 [._]*.un~
+
+### VirtualEnv ###
+# Virtualenv
+# http://iamzed.com/2009/05/07/a-primer-on-virtualenv/
+[Bb]in
+[Ii]nclude
+[Ll]ib
+[Ll]ib64
+[Ll]ocal
+[Ss]cripts
+pyvenv.cfg
+.venv
+pip-selfcheck.json
+
+### vscode ###
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
 
 ### Windows ###
 # Windows thumbnail cache files
@@ -738,4 +839,4 @@ FodyWeavers.xsd
 # Additional files built by Visual Studio
 *.tlog
 
-# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,visualstudio,sublimetext,vim,linux,windows,macos
+# End of https://www.toptal.com/developers/gitignore/api/python,pycharm,vscode,visualstudio,sublimetext,virtualenv,vim,linux,macos,windows,test
