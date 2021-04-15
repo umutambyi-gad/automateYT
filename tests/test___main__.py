@@ -180,3 +180,10 @@ class TestMain:
 		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
 			if information['title'] in file and os.path.isfile(file) and file.endswith('srt'):
 				assert True
+
+
+	def test_download_playlist(self):
+		playlist = Automate(
+			"https://www.youtube.com/playlist?list=PL9FUXHTBubp-_e0wyNu1jfVVJ2QVAi5NW"
+		).download_playlist(max_count=2)
+
