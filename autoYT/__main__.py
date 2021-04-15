@@ -6,7 +6,8 @@ import re
 from autoYT.exceptions import (
 	EmptyLookUpListError,
 	ResolutionAbsenceError,
-	NonExistLocationError
+	NonExistLocationError,
+	InvalidFormatError
 )
 
 
@@ -193,6 +194,9 @@ class Automate(Timing):
 
 		found = []
 
+		if fmt.lower() not in ('json', 'yaml'):
+			raise InvalidFormatError("fmt (format) should be json or yaml")
+
 		# process for dict - self.urls_with_res
 		if len(self.urls_with_res) > 0:
 			if len(self.urls_with_res[self.__get()].keys()) > 0:
@@ -253,11 +257,11 @@ class Automate(Timing):
 			})
 
 		# returning json if fmt is json
-		if fmt == 'json':
+		if fmt.lower() == 'json':
 			return __import__('json').dumps(found, indent=4)
 
 		# returning yaml if ftm is yaml
-		elif fmt == 'yaml':
+		elif fmt.lower() == 'yaml':
 			return __import__('yaml').dump(found, indent=4)
 
 	def generate_watch_url_from_playlist(self) -> list:
