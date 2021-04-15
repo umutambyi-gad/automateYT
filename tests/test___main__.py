@@ -168,3 +168,15 @@ class TestMain:
 		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
 			if information['title'] in file and os.path.isfile(file):
 				assert True
+
+
+	def test_download_subtitle(self):
+		auto = Automate('https://www.youtube.com/watch?v=yg8116aeD7E')
+
+		information = auto.info()
+
+		auto.download_subtitle()
+
+		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
+			if information['title'] in file and os.path.isfile(file) and file.endswith('srt'):
+				assert True
