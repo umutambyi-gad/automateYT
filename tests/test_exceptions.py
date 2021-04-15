@@ -2,6 +2,7 @@ import pytest
 from autoYT.__main__ import Automate
 from autoYT.exceptions import *
 
+
 class TestExceptions:
 	def test_EmptyLookUpListError(self):
 		with pytest.raises(EmptyLookUpListError) as exc_info:
@@ -48,6 +49,7 @@ class TestExceptions:
 
 		assert str(exc_info.value) == "provided location (path) doesn't exists"
 
+	
 	def test_TypeError(self):
 		with pytest.raises(TypeError) as exc_info:
 			Automate({'https://www.youtube.com/watch?v=XqZsoesa55w'}).download()
@@ -58,3 +60,9 @@ class TestExceptions:
 			Automate(urls_with_res='https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n').download_playlist()
 
 		assert str(exc_info.value) == "dict were expected but str was given"
+
+
+	@pytest.mark.xfail(raises=InvalidFormatError)
+	def test_InvalidFormatError(self):
+		Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('otherThanJsonOrYaml')
+
