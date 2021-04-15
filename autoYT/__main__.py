@@ -524,8 +524,13 @@ class Automate(Timing):
 		elif lowest_res:
 			highest_res = False
 
+		# Raise ResolutionAbsenceError if none of lowest_res or highest_res is set to True
+		if not highest_res and not lowest_res:
+			raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
+
 		# initialize count to 1
 		count = 0
+
 
 		# loop through list of watch url generated from playlist and download untill max_count breaks it
 		for url in self.generate_watch_url_from_playlist():
@@ -542,9 +547,6 @@ class Automate(Timing):
 			# termimates if count is equal to the max_count
 			elif count == max_count:
 				break
-
-			else:
-				raise ResolutionAbsenceError("Neither highest nor lowest resolution specified")
 
 			count += 1
 
