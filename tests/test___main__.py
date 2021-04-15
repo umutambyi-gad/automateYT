@@ -238,3 +238,26 @@ class TestMain:
 	def test__len__(self, obj, total):
 		assert obj.__len__() == total
 
+
+	@pytest.mark.parametrize(
+		'obj, representation',
+		[
+			(
+				Automate('https://www.youtube.com/watch?v=vFWv44Z4Jhk'),
+				'<Automate urls="{}", urls_with_res="{}{}">\n'.format(json.dumps(['https://www.youtube.com/watch?v=vFWv44Z4Jhk'], indent=4), chr(123), chr(125))
+			),
+
+			(
+				Automate(urls_with_res={'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '720'}),
+				'<Automate urls="[]", urls_with_res="{}">\n'.format(json.dumps({'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '720'}, indent=4))
+			),
+
+			(
+				Automate('https://www.youtube.com/watch?v=vFWv44Z4Jhk', urls_with_res={'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '720'}),
+				'<Automate urls="{}", urls_with_res="{}">\n'.format(json.dumps(['https://www.youtube.com/watch?v=vFWv44Z4Jhk'], indent=4), json.dumps({'https://www.youtube.com/watch?v=vFWv44Z4Jhk': '720'}, indent=4))
+			),
+		]
+	)
+	def test__repr__(self, obj, representation):
+		assert repr(obj) == representation
+
