@@ -147,3 +147,24 @@ class TestMain:
 		assert 'https://www.youtube.com/watch?v=83Y2qZvWxdE' in information
 		assert 'https://www.youtube.com/watch?v=CdltAssTMs8' in information
 
+
+	def test_download(self):
+		obj_1 = Automate('https://www.youtube.com/watch?v=F4tHL8reNCs')
+
+		information = json.loads(obj_1.info())[0]
+
+		obj_1.download()
+
+		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
+			if information['title'] in file and os.path.isfile(file):
+				assert True
+
+		obj_2 = Automate('https://www.youtube.com/watch?v=XqZsoesa55w')
+
+		information = json.loads(obj_2.info())[0]
+
+		obj_2.download()
+
+		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
+			if information['title'] in file and os.path.isfile(file):
+				assert True
