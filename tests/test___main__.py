@@ -186,7 +186,7 @@ class TestMain:
 	def test_download_playlist(self):
 		playlist = Automate(
 			"https://www.youtube.com/playlist?list=PL9FUXHTBubp-_e0wyNu1jfVVJ2QVAi5NW"
-		).download_playlist(max_count=2)
+		).download_playlist(limit=2)
 
 		# equivalent to assert True or False because download_playlist returns bool
 		assert playlist
