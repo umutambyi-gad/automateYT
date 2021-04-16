@@ -15,7 +15,7 @@ class Timing:
 	"""class for converting string time looks like (2h:30m, 2h30m, or 2h-30m) into seconds"""
 
 	def after(self, time: str):
-		"""Method for converting human readable time (2h:30m) into seconds.
+		"""Method for delaying time which are in format of human readable time (2h:30m)
 		
 		:param: str time
 			string time for delaying which written in human readable format - ex.
@@ -488,7 +488,7 @@ class Automate(Timing):
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'), # get Downloads on every platform
 		highest_res: bool = True,
 		lowest_res: bool = False,
-		max_count: int = 25,
+		limit: int = 25,
 		subtitle: bool = False,
 		shutdown: bool = False
 	) -> bool:
@@ -503,8 +503,8 @@ class Automate(Timing):
 		:param: bool lowest_res
 			if lowest_res is True the script gets the lowest resolution available
 
-		:param: int max_count
-			integer max_count limits the number of the videos to be downloaded
+		:param: int limit
+			integer limit limits the number of the videos to be downloaded
 
 		:param: bool subtitle
 			if subtitle is True english version or english auto generated subtitle is downloaded within its video
@@ -534,22 +534,22 @@ class Automate(Timing):
 		count = 0
 
 
-		# loop through list of watch url generated from playlist and download untill max_count breaks it
+		# loop through list of watch url generated from playlist and download untill limit breaks it
 		for url in self.generate_watch_url_from_playlist():
 			youtube = YouTube(url)
 
-			if highest_res and not lowest_res and not count == max_count:
+			if highest_res and not lowest_res and not count == limit:
 				if youtube.streams:
 					youtube.streams.get_highest_resolution().download(location)
 					rtype = True
 
-			elif lowest_res and not highest_res and not count == max_count:
+			elif lowest_res and not highest_res and not count == limit:
 				if youtube.streams:
 					youtube.streams.get_lowest_resolution().download(location)
 					rtype = True
 			
-			# termimates if count is equal to the max_count
-			elif count == max_count:
+			# termimates if count is equal to the limit
+			elif count == limit:
 				break
 
 			count += 1
