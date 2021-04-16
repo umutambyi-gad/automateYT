@@ -204,9 +204,7 @@ class Automate(Timing):
 					youtube = YouTube(dict_url.strip())
 
 					available_resolution = [
-						i.resolution for i in youtube.streams.filter(
-							progressive=True, subtype="mp4"
-						).order_by("resolution").asc()
+						i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution").asc()
 					]
 
 					vid_type = youtube.streams.get_by_resolution(dict_res)
@@ -234,9 +232,7 @@ class Automate(Timing):
 			youtube = YouTube(url)
 
 			available_resolution = [
-				i.resolution for i in youtube.streams.filter(
-					progressive=True, subtype="mp4"
-				).order_by("resolution").asc()
+				i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution").asc()
 			]
 
 			found.append({
@@ -343,7 +339,7 @@ class Automate(Timing):
 
 							# get audio only if only_audio is True
 							elif only_audio:
-								youtube.streams.filter(only_audio=only_audio).download(location=location)
+								youtube.streams.filter(only_audio=only_audio).first().download(location)
 
 							else:
 								youtube.streams.get_by_resolution(dict_res.strip()).download(location)
@@ -374,7 +370,7 @@ class Automate(Timing):
 
 					# get audio only if only_audio is True
 					elif only_audio:
-						youtube.streams.filter(only_audio=only_audio).download(location=location)
+						youtube.streams.filter(only_audio=only_audio).first().download(location)
 
 					# raise ResolutionAbsenceError error when neither highest nor lowest and not only_audio (is true)
 					elif not only_audio and not highest_res and not lowest_res:
@@ -495,7 +491,7 @@ class Automate(Timing):
 		max_count: int = 25,
 		subtitle: bool = False,
 		shutdown: bool = False
-	):
+	) -> bool:
 		"""Method to download youtube playlist
 
 		:param: str location
@@ -516,9 +512,11 @@ class Automate(Timing):
 		:param: bool shutdown
 			if shutdown is True the computer shuts down after downloads is completely done 
 
-		:rtype: None
+		:rtype: bool
 
 		"""
+
+		rtype = False
 
 		# check for requirements
 		self.__check_availabilty(location=location)
@@ -543,10 +541,12 @@ class Automate(Timing):
 			if highest_res and not lowest_res and not count == max_count:
 				if youtube.streams:
 					youtube.streams.get_highest_resolution().download(location)
+					rtype = True
 
 			elif lowest_res and not highest_res and not count == max_count:
 				if youtube.streams:
 					youtube.streams.get_lowest_resolution().download(location)
+					rtype = True
 			
 			# termimates if count is equal to the max_count
 			elif count == max_count:
@@ -559,6 +559,8 @@ class Automate(Timing):
 
 		if shutdown:
 			self.shutdown()
+
+		return rtype
 
 	def __len__(self) -> int:
 		total = len(self.__playList(self.urls))
