@@ -126,7 +126,7 @@ class TestMain:
 			'https://www.youtube.com/watch?v=F4tHL8reNCs'
 		).info('yaml')
 
-		information_in_yaml = yaml.load(information_in_yaml)
+		information_in_yaml = yaml.load(information_in_yaml, Loader=yaml.FullLoader)
 		information_in_yaml = information_in_yaml[0]
 
 		assert information_in_yaml['author'] == "LooLoo Kids - Nursery Rhymes and Children's Songs"
@@ -163,13 +163,13 @@ class TestMain:
 
 		information = json.loads(obj_2.info())[0]
 
-		obj_2.download()
+		obj_2.download(only_audio=True)
 
 		for file in os.listdir(os.path.join(os.path.expanduser('~'), "Downloads")):
 			if information['title'] in file and os.path.isfile(file):
 				assert True
 
-
+	
 	def test_download_subtitle(self):
 		auto = Automate('https://www.youtube.com/watch?v=yg8116aeD7E')
 
@@ -182,10 +182,14 @@ class TestMain:
 				assert True
 
 
+
 	def test_download_playlist(self):
 		playlist = Automate(
 			"https://www.youtube.com/playlist?list=PL9FUXHTBubp-_e0wyNu1jfVVJ2QVAi5NW"
 		).download_playlist(max_count=2)
+
+		# equivalent to assert True or False because download_playlist returns bool
+		assert playlist
 
 	
 	@pytest.mark.parametrize(
