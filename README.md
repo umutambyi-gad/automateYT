@@ -2,9 +2,7 @@
 ## autoYT
 autoYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
 
-## QuickStart
-
-### Installation
+## Installation
 autoYT requires an installation of python 3.6 or greater and [pytube](https://github.com/pytube/pytube.git), as well as pip. Pip is typically bundled with python installations, and you can find options
 for how to install python at [`https://python.org`](https://python.org). <br>
 - To install from pypi with pip:
