@@ -62,7 +62,10 @@ class TestExceptions:
 		assert str(exc_info.value) == "dict were expected but str was given"
 
 
-	@pytest.mark.xfail(raises=InvalidFormatError)
 	def test_InvalidFormatError(self):
-		Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('otherThanJsonOrYaml')
+		with pytest.raises(InvalidFormatError) as exc_info:
+			Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('otherThanJsonOrYaml')
+		
+		assert str(exc_info.value) == "fmt (format) should be json or yaml"
+		
 
