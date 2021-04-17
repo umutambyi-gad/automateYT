@@ -17,11 +17,6 @@ setup(
     author_email="umutambyig@gmail.com",
     license="MIT",
     python_requires=">=3.6",
-    entry_points={
-        'console_scripts': [
-            'autoYT = autoYT:main',
-        ]
-    },
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.6",
