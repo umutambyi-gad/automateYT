@@ -63,11 +63,16 @@ Output will be something like -
         "type": "video/mp4",
         "filesize": "11.4MiB",
         "available_resolution": [
-            "360p"
+            "144p",
+            "240p",
+            "360p",
+            "480p",
+            "720p",
+            "1080p"
         ],
-        "highest_resolution": "360p",
+        "highest_resolution": "1080p",
         "lowest_resolution": "360p",
-        "views": "8,343,725,340",
+        "views": "8,350,191,773",
         "rating": 3.7,
         "age_restricted": false
     }
@@ -85,18 +90,25 @@ Output will be in `yaml` format -
 -   age_restricted: false
     author: Pinkfong! Kids' Songs & Stories
     available_resolution:
+    - 144p
+    - 240p
     - 360p
+    - 480p
+    - 720p
+    - 1080p
     filesize: 11.4MiB
-    highest_resolution: 360p
+    highest_resolution: 1080p
     lowest_resolution: 360p
     publish_date: '2016-06-17'
     rating: 3.7
     thumbnail_url: https://i.ytimg.com/vi/XqZsoesa55w/maxresdefault.jpg
-    title: 'Baby Shark Dance | #babyshark Most Viewed Video | Animal Songs | PINKFONG Songs for Children'
+    title: 'Baby Shark Dance | #babyshark Most Viewed Video | Animal Songs | PINKFONG
+        Songs for Children'
     type: video/mp4
     video_id: XqZsoesa55w
-    views: 8,343,725,340
+    views: 8,350,191,773
     watch_url: https://www.youtube.com/watch?v=XqZsoesa55w
+
 
 ```
 And we all know that youtube can have playlist which contains couple of videos, the following is how you can generate watch urls of every single video from the playlist.
