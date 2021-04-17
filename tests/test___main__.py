@@ -12,7 +12,7 @@ class TestMain:
 	@pytest.fixture
 	def automate(self):
 		urls = (
-			'https://www.youtube.com/watch?v=vFWv44Z4Jhk',
+			'https://www.youtube.com/watch?v=L0MK7qz13bU',
 			'https://www.youtube.com/watch?v=Kx68g1rLbbU'
 		)
 
@@ -109,6 +109,7 @@ class TestMain:
 		assert time_ellapsed == 2
 
 
+	@pytest.mark.req_net
 	def test_info(self):
 		information_in_json = Automate(
 			'https://www.youtube.com/watch?v=XqZsoesa55w'
@@ -134,20 +135,32 @@ class TestMain:
 		assert information_in_yaml['video_id'] == "F4tHL8reNCs"
 		assert information_in_yaml['publish_date'] == '2016-10-08'
 
-
-	def test_generate_watch_url_from_playlist(self):
-		information = Automate(
+	@pytest.mark.req_net
+	@pytest.mark.parametrize(
+		'included',
+		[
+			('https://www.youtube.com/watch?v=TB-G1KqRb5o'),
+			('https://www.youtube.com/watch?v=83Y2qZvWxdE'),
+			('https://www.youtube.com/watch?v=CdltAssTMs8'),
+			('https://www.youtube.com/watch?v=i0toy3zfUUk'),
+			('https://www.youtube.com/watch?v=mVWQNeY1Pb4'),
+			('https://www.youtube.com/watch?v=rQTJuCCCLVo'),
+			('https://www.youtube.com/watch?v=XxRtj-GU5_8'),
+			('https://www.youtube.com/watch?v=mPB2PyzkOfw')
+		]
+	)
+	def test_generate_watch_url_from_playlist(self, included):
+		watchUrls = Automate(
 			"https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n"
 		).generate_watch_url_from_playlist()
 
-		assert type(information) == list
-		assert len(information) > 0
+		assert type(watchUrls) is list
+		assert len(watchUrls) > 0
 
-		assert 'https://www.youtube.com/watch?v=TB-G1KqRb5o' in information
-		assert 'https://www.youtube.com/watch?v=83Y2qZvWxdE' in information
-		assert 'https://www.youtube.com/watch?v=CdltAssTMs8' in information
+		assert included in watchUrls
 
 
+	@pytest.mark.req_net
 	def test_download(self):
 		obj_1 = Automate('https://www.youtube.com/watch?v=F4tHL8reNCs')
 
@@ -170,6 +183,7 @@ class TestMain:
 				assert True
 
 	
+	@pytest.mark.req_net
 	def test_download_subtitle(self):
 		auto = Automate('https://www.youtube.com/watch?v=yg8116aeD7E')
 
@@ -183,6 +197,7 @@ class TestMain:
 
 
 
+	@pytest.mark.req_net
 	def test_download_playlist(self):
 		playlist = Automate(
 			"https://www.youtube.com/playlist?list=PL9FUXHTBubp-_e0wyNu1jfVVJ2QVAi5NW"
