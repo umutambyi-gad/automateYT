@@ -459,11 +459,11 @@ class Automate(Timing):
 				youtube = YouTube(url)
 
 				if youtube.captions.__len__() > 0:
-					if youtube.captions[lang_code].code == lang_code:
+					if lang_code in youtube.captions:
 						youtube.captions[lang_code].download(youtube.title, output_path=location)
 
 					elif auto_generated:
-						if youtube.captions[lang_code].code == f"a.{lang_code}":
+						if f'a.{lang_code}' in youtube.captions:
 							lang_code = f"a.{lang_code}"
 							youtube.captions[lang_code].download(youtube.title, output_path=location)
 
