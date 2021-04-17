@@ -77,7 +77,10 @@ class Timing:
 		
 
 class Automate(Timing):
-	"""Class for automating youtube videos or audios downloading"""
+	"""
+	Class with methods for automating to download youtube videos as either videos or
+	audios, subtitles (if available) and generating watch urls from youtube playlist.
+	"""
 
 	def __init__(
 		self,
@@ -124,7 +127,7 @@ class Automate(Timing):
 		return [*{*collections}] # removing dublicates
 
 	def shutdown(self):
-		"""Method for shutting down the computer using API command"""
+		"""Method for shutting down the computer using API from commandline"""
 
 		if platform.system() == 'Windows':
 			os.system('shutdown /s /t 1')
@@ -169,7 +172,8 @@ class Automate(Timing):
 				raise NonExistLocationError("provided location (path) doesn't exists")
 
 	def info(self, fmt: str = 'json'):
-		"""Method for giving some useful information about the videos or audios
+		"""Method for giving some useful information about the youtube videos in easy and
+		readable format.
 
 		:param: str fmt
 			String ftm (format) controls the return type by default is `json` and other
@@ -261,7 +265,7 @@ class Automate(Timing):
 			return __import__('yaml').dump(found, indent=4)
 
 	def generate_watch_url_from_playlist(self) -> list:
-		"""Method for generating watch_url from playlist"""
+		"""Method for generating valid youtube watch urls from the youtube playlist"""
 
 		# check for requirements
 		self.__check_availabilty()
@@ -291,7 +295,8 @@ class Automate(Timing):
 		shutdown: bool = False,
 		only_audio: bool = False
 	):
-		"""Method for automating the downloading of YouTube videos
+		"""Method for downloading of custom resolution YouTube videos as videos or audio and also subtitles
+		(if available)
 
 		:param: str location
 			location path on your computer to save the downloads, by default is in Downloads
@@ -397,7 +402,8 @@ class Automate(Timing):
 		location: str = os.path.join(os.path.expanduser('~'), 'Downloads'), # get Downloads on every platform
 		shutdown: bool = False
 	):
-		"""Method for automating the downloading of YouTube video's subtitles
+		"""Method for downloading YouTube video's subtitles (if available) or auto generated one
+		in whatever language
 		
 		:param: str lang_code
 			language code of the subtitle to automate its downloading notice that the default is
@@ -492,7 +498,7 @@ class Automate(Timing):
 		subtitle: bool = False,
 		shutdown: bool = False
 	) -> bool:
-		"""Method to download youtube playlist
+		"""Method for downloading youtube playlist till the limit given is reached
 
 		:param: str location
 			location on your computer to save the downloads, by default is in Downloads
