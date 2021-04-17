@@ -204,7 +204,7 @@ class Automate(Timing):
 					youtube = YouTube(dict_url.strip())
 
 					available_resolution = [
-						i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution").asc()
+						*{i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution")}
 					]
 
 					vid_type = youtube.streams.get_by_resolution(dict_res)
@@ -219,7 +219,7 @@ class Automate(Timing):
 						'publish_date': str(youtube.publish_date.date()),
 						'type': vid_type.mime_type if vid_type else youtube.streams.get_highest_resolution().mime_type,
 						'filesize': size_fmt(filesize.filesize) if filesize else size_fmt(youtube.streams.get_highest_resolution().filesize),
-						'available_resolution': available_resolution,
+						'available_resolution': [f'{i}p' for i in sorted([int(i[:-1]) for i in available_resolution])],
 						'highest_resolution': youtube.streams.get_highest_resolution().resolution,
 						'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
 						'views': "{:,}".format(youtube.views),
@@ -232,7 +232,7 @@ class Automate(Timing):
 			youtube = YouTube(url)
 
 			available_resolution = [
-				i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution").asc()
+				*{i.resolution for i in youtube.streams.filter(subtype="mp4").order_by("resolution")}
 			]
 
 			found.append({
@@ -244,7 +244,7 @@ class Automate(Timing):
 				'publish_date': str(youtube.publish_date.date()),
 				'type': youtube.streams.get_highest_resolution().mime_type,
 				'filesize': size_fmt(youtube.streams.get_highest_resolution().filesize),
-				'available_resolution': available_resolution,
+				'available_resolution': [f'{i}p' for i in sorted([int(i[:-1]) for i in available_resolution])],
 				'highest_resolution': youtube.streams.get_highest_resolution().resolution,
 				'lowest_resolution': youtube.streams.get_lowest_resolution().resolution,
 				'views': "{:,}".format(youtube.views),
