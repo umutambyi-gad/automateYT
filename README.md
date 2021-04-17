@@ -4,7 +4,7 @@
 <a href="" title="Pypi version"><img src="https://img.shields.io/pypi/v/automateYT?style=flat"></a>
 <a href="" title="Contributions are welcome"><img src="https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat"></a>
 <a href="" title="Code size"><img src="https://img.shields.io/github/languages/code-size/umutambyi-gad/automateYT?color=blue&style=flat"></a>
-<a href="" title="License"><img src="https://img.shields.io/pypi/l/automateYT?color=blue&style=flat"></a>
+<a href="" title="License"><img src="https://img.shields.io/pypi/l/automateYT?color=blue"></a>
 
 
 automateYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
