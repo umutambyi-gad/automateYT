@@ -1,5 +1,12 @@
 
 ## autoYT
+<a href="" title="Python versions"><img src="https://img.shields.io/pypi/pyversions/autoYT?style=flat"></a>
+<a href="" title="Pypi version"><img src="https://img.shields.io/pypi/v/autoyt?style=flat"></a>
+<a href="" title="Contributions are welcome"><img src="https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat"></a>
+<a href="" title="Code size"><img src="https://img.shields.io/github/languages/code-size/umutambyi-gad/autoYT?color=blue&style=flat"></a>
+<a href="" title="License"><img src="https://img.shields.io/pypi/l/autoYT?color=blue&style=flat"></a>
+
+
 autoYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
 
 ## Installation
@@ -167,10 +174,10 @@ Remember if you don't specify `location` by default will be in `Downloads` don't
 
 ## Documentation
 
-### <u>Timing</u>
+### Timing
 class for converting string time looks like (`2h:30m`, `2h30m`, or `2h-30m`) into seconds and delay time 
 
-### <u>Automate</u>
+### Automate
 Class with methods for automating to download youtube videos as either videos or audios, subtitles (if available) and generating watch urls from youtube playlist.
 ```python
 Automate(*urls: tuple or list,**urls_with_res: dict)
@@ -181,7 +188,7 @@ Automate(*urls: tuple or list,**urls_with_res: dict)
 `:param:` *dict urls_with_res:*<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dict where keys are valid YouTube watch URLs and values are valid video resolutions.
 
-### <u>after</u>
+### after
 Method for delaying time which are in format of human readable time (`2h:30m`)
 ```python
 Timing().after('20m:15s')
@@ -190,7 +197,7 @@ Timing().after('20m:15s')
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string time for delaying which written in human readable format - ex.
 `2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 
-### <u>info</u>
+### info
 Method for giving some useful information about the youtube videos in easy and readable format.
 ```python
 Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info()
@@ -203,7 +210,7 @@ Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('yaml')
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ftm (format) controls the return type by default is `json` and other available format is `yaml`<br>
 `:rtype:` *yaml or json*
 
-### <u>generate_watch_url_from_playlist</u>
+### generate_watch_url_from_playlist
 Method for generating valid youtube watch urls from the youtube playlist
 
 ```python
@@ -212,7 +219,7 @@ Automate(
 ).generate_watch_url_from_playlist()
 ```
 `:rtype:` *list*
-### <u>download</u>
+### download
 Method for downloading of custom resolution YouTube videos as videos or audio and also subtitles (if available) 
 
 ```python
@@ -244,7 +251,7 @@ Automate(
 `:param:` bool only_audio <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if only_audio is True audio only is downloaded
 
-### <u>download_subtitle</u>
+### download_subtitle
 Method for downloading YouTube video's subtitles (if available) or auto generated one in whatever language
 
 ```python
@@ -269,7 +276,7 @@ Automate(
 `:param:` bool shutdown <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done.
 
-### <u>download_playlist</u>
+### download_playlist
 Method for downloading youtube playlist till the limit given is reached
 
 ```python
@@ -296,3 +303,5 @@ Automate(
 
 `:param:` bool shutdown <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done.
+## License
+This project is under the [MIT](https://github.com/umutambyi-gad/autoYT/blob/master/LICENSE) license
