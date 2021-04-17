@@ -6,7 +6,7 @@ __title__ = "autoYT"
 __author__ = "Umutambyi Gad"
 __copyright__ = "Copyright 2021 by Umutambyi Gad"
 __license__ = 'MIT'
-__version__ = 'v1.0.0'
+__version__ = '1.0.0'
 
 
 from autoYT.__main__ import Automate
