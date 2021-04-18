@@ -1,12 +1,34 @@
-## autoYT
-autoYT is lightweight library that automates downloading of youtube videos, subtitles (if available) and playlist.
 
-## Installation
-autoYT requires an installation of python 3.6 or greater, as well as pip. <br>
-To install from pypi with pip:
-```
+## autoYT
+autoYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
+
+## QuickStart
+
+### Installation
+autoYT requires an installation of python 3.6 or greater and [pytube](https://github.com/pytube/pytube.git), as well as pip. Pip is typically bundled with python installations, and you can find options
+for how to install python at [`https://python.org`](https://python.org). <br>
+- To install from pypi with pip:
+```bash
 pip install autoYT
 ```
+- Clone GitHub repository
+```bash
+git clone https://github.com/umutambyi-gad/autoYT
+```
+
+## Overview
+####  Classes:
+- **[`Timing`](#timing)**
+- **[`Automate`](#automate)**
+
+#### Methods:
+- **[`after()`](#after)**
+- **[`info()`](#info)**
+- **[`generate_watch_url_from_playlist()`](#generate_watch_url_from_playlist)**
+- **[`download()`](#download)**
+- **[`download_subtitle()`](#download_subtitle)**
+- **[`download_playlist()`](#download_playlist)**
+- **[`shutdown()`](#shutdown)**
 
 ## Usage
 First of all import `Automate` class from `autoYT`
@@ -17,8 +39,9 @@ from autoYT import Automate
 **Quick demo:** let's say you want to download three videos and their subtitles after two hours and half and when it's done the computer shuts down itself
 ```python
 from autoYT import Automate
+from autoYT import Timing
 
-Automate().after('2h-30m')
+Timing().after('2h-30m') # or Automate().after('2h-30m') since Automate extends Timing
 Automate([
 	'https://www.youtube.com/watch?v=XqZsoesa55w',
 	'https://www.youtube.com/watch?v=F4tHL8reNCs',
@@ -46,7 +69,9 @@ Automate(watchUrls_with_their_resolution={
 Now you saw how to download them but we have passed watch url on in `Automate` class like `Automate('https://www.youtube.com/watch?v=XqZsoesa55w')` so what makes you think it's the true watch url
 here is how you can view major information about the watch url.
 ```python
-info = Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info()
+info = Automate(
+    'https://www.youtube.com/watch?v=XqZsoesa55w'
+).info()
 print(info)
 ```
 Output will be something like - 
@@ -81,7 +106,9 @@ Output will be something like -
 As you can see the output above is in `json` format but what if you prefer `yaml` format than `json` just pass keyword string `yaml` as an argument in the `info` like -
 
 ```python
-info = Automate(('https://www.youtube.com/watch?v=XqZsoesa55w',)).info('yaml')
+info = Automate(
+    ('https://www.youtube.com/watch?v=XqZsoesa55w',)
+).info('yaml')
 print(info)
 ```
 Output will be in `yaml` format -
@@ -134,25 +161,19 @@ An output will be something like -
 So not only you can generate watch urls from playlist url but also you can download them all or provide an integer `limit` argument to limit videos to be downloaded from the playlist.
 
 ```python
-Automate("https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n").download_playlist(limit=10)
+Automate(
+    "https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n"
+).download_playlist(limit=10)
 ```
-Remember if you don't specify `location` by default will be in `Downloads` don't worry about on what platform you are on. and also you can download their subtitles to by passing this `subtitle=True` argument
+Remember if you don't specify `location` by default will be in `Downloads` don't worry about on what platform you are on. and also you can download their subtitles to by passing this `subtitle=True` argument.
 
-## Overview
-#### main class:
-- **[Automate](#automate)**
+## Documentation
 
-#### available methods:
-- **[after()](#after)**
-- **[info()](#info)**
-- **[generate_watch_url_from_playlist()](#generate_watch_url_from_playlist)**
-- **[download()](#download)**
-- **[download_subtitle()](#download_subtitle)**
-- **[download_playlist()](#download_playlist)**
-- **[shutdown()](#shutdown)**
+### <u>Timing</u>
+class for converting string time looks like (`2h:30m`, `2h30m`, or `2h-30m`) into seconds and delay time 
 
-### Automate
-Class for automating youtube videos or audios downloading
+### <u>Automate</u>
+Class with methods for automating to download youtube videos as either videos or audios, subtitles (if available) and generating watch urls from youtube playlist.
 ```python
 Automate(*urls: tuple or list,**urls_with_res: dict)
 ```
@@ -162,21 +183,21 @@ Automate(*urls: tuple or list,**urls_with_res: dict)
 `:param:` *dict urls_with_res:*<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; dict where keys are valid YouTube watch URLs and values are valid video resolutions.
 
-### after
-Method for delaying time which are in format of human readable time (2h:30m).
+### <u>after</u>
+Method for delaying time which are in format of human readable time (`2h:30m`)
 ```python
-Automate().after('20m:15s')
+Timing().after('20m:15s')
 ```
 `:param:` *str time*<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; string time for delaying which written in human readable format - ex.
 `2h:30m` or `2h-30m` or `30s` where `h` -> `hours`, `m` -> `minutes` and `s` -> `second`
 
-### info 
-Method for giving some useful information about the videos or audios.
+### <u>info</u>
+Method for giving some useful information about the youtube videos in easy and readable format.
 ```python
 Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info()
 ```
--- OR --
+-- or --
 ```python
 Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('yaml')
 ```
@@ -184,8 +205,8 @@ Automate('https://www.youtube.com/watch?v=XqZsoesa55w').info('yaml')
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; String ftm (format) controls the return type by default is `json` and other available format is `yaml`<br>
 `:rtype:` *yaml or json*
 
-### generate_watch_url_from_playlist
-Method for generating watch_url from playlist <br>
+### <u>generate_watch_url_from_playlist</u>
+Method for generating valid youtube watch urls from the youtube playlist
 
 ```python
 Automate(
@@ -193,8 +214,87 @@ Automate(
 ).generate_watch_url_from_playlist()
 ```
 `:rtype:` *list*
-### download
-Method for automating the downloading of YouTube videos
+### <u>download</u>
+Method for downloading of custom resolution YouTube videos as videos or audio and also subtitles (if available) 
+
+```python
+Automate(
+    'https://www.youtube.com/watch?v=XqZsoesa55w',
+).download(
+    subtitle=True,
+    location='C:/Users/GentleMan/videos',
+    only_audio=True,
+    shutdown=True
+)
 ```
 
+`:param:` str location <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location path on your computer to save the downloads, by default is in Downloads
+
+`:param:` bool highest_res <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if highest_res is True the script gets the highest resolution available
+
+`:param:` bool lowest_res <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if lowest_res is True the script gets the lowest resolution available
+
+`:param:` bool subtitle <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if subtitle is True english version or english auto generated subtitle is downloaded within its video
+
+`:param:` bool shutdown <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done
+
+`:param:` bool only_audio <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if only_audio is True audio only is downloaded
+
+### <u>download_subtitle</u>
+Method for downloading YouTube video's subtitles (if available) or auto generated one in whatever language
+
+```python
+Automate(
+    'https://www.youtube.com/watch?v=XqZsoesa55w',
+).download(
+    location='C:/Users/GentleMan/videos',
+    lang_code='en',
+    auto_generated=False,
+    shutdown=True
+)
 ```
+`:param:` str lang_code <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; language code of the subtitle to automate its downloading notice that the default is 'en' (English).
+
+`:param:` str auto_generated <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; by default True, this downloads auto generated version of the same language code in absence of offical one.
+
+`:param:` str location <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location on your computer to save the downloads, by default is in Downloads.
+
+`:param:` bool shutdown <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done.
+
+### <u>download_playlist</u>
+Method for downloading youtube playlist till the limit given is reached
+
+```python
+Automate(
+    "https://www.youtube.com/playlist?list=PLS1QulWo1RIaJECMeUT4LFwJ-ghgoSH6n"
+).download_playlist(
+    limit=30
+)
+```
+`:param:` str location <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; location on your computer to save the downloads, by default is in Downloads.
+
+`:param:` bool highest_res <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if highest_res is True the script gets the highest resolution available.
+
+`:param:` bool lowest_res <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if lowest_res is True the script gets the lowest resolution available.
+
+`:param:` int limit <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; integer limit limits the number of the videos to be downloaded.
+
+`:param:` bool subtitle <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if subtitle is True english version or english auto generated subtitle is downloaded within its video.
+
+`:param:` bool shutdown <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done.
