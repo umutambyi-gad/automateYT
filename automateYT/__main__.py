@@ -3,7 +3,7 @@ from pytube import Playlist
 import os
 import platform
 import re
-from autoYT.exceptions import (
+from automateYT.exceptions import (
 	EmptyLookUpListError,
 	ResolutionAbsenceError,
 	NonExistLocationError,

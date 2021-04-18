@@ -1,5 +1,5 @@
 import pytest
-from autoYT.__main__ import Automate
+from automateYT.__main__ import Automate
 import math
 import time
 import json

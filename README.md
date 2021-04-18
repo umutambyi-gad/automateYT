@@ -1,24 +1,24 @@
 
-## autoYT
-<a href="" title="Python versions"><img src="https://img.shields.io/pypi/pyversions/autoYT?style=flat"></a>
-<a href="" title="Pypi version"><img src="https://img.shields.io/pypi/v/autoyt?style=flat"></a>
+## automateYT
+<a href="" title="Python versions"><img src="https://img.shields.io/pypi/pyversions/automateYT?style=flat"></a>
+<a href="" title="Pypi version"><img src="https://img.shields.io/pypi/v/automateYT?style=flat"></a>
 <a href="" title="Contributions are welcome"><img src="https://img.shields.io/badge/contributions-welcome-blue.svg?style=flat"></a>
-<a href="" title="Code size"><img src="https://img.shields.io/github/languages/code-size/umutambyi-gad/autoYT?color=blue&style=flat"></a>
-<a href="" title="License"><img src="https://img.shields.io/pypi/l/autoYT?color=blue&style=flat"></a>
+<a href="" title="Code size"><img src="https://img.shields.io/github/languages/code-size/umutambyi-gad/automateYT?color=blue&style=flat"></a>
+<a href="" title="License"><img src="https://img.shields.io/pypi/l/automateYT?color=blue&style=flat"></a>
 
 
-autoYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
+automateYT is lightweight library for automating to download youtube videos, subtitles (if available) and playlist.
 
 ## Installation
-autoYT requires an installation of python 3.6 or greater and [pytube](https://github.com/pytube/pytube.git), as well as pip. Pip is typically bundled with python installations, and you can find options
+automateYT requires an installation of python 3.6 or greater and [pytube](https://github.com/pytube/pytube.git), as well as pip. Pip is typically bundled with python installations, and you can find options
 for how to install python at [`https://python.org`](https://python.org). <br>
 - To install from pypi with pip:
 ```bash
-pip install autoYT
+pip install automateYT
 ```
 - Clone GitHub repository
 ```bash
-git clone https://github.com/umutambyi-gad/autoYT
+git clone https://github.com/umutambyi-gad/automateYT
 ```
 
 ## Overview
@@ -36,15 +36,15 @@ git clone https://github.com/umutambyi-gad/autoYT
 - **[`shutdown()`](#shutdown)**
 
 ## Usage
-First of all import `Automate` class from `autoYT`
+First of all import `Automate` class from `automateYT`
 
 ```python
-from autoYT import Automate
+from automateYT import Automate
 ```
 **Quick demo:** let's say you want to download three videos and their subtitles after two hours and half and when it's done the computer shuts down itself
 ```python
-from autoYT import Automate
-from autoYT import Timing
+from automateYT import Automate
+from automateYT import Timing
 
 Timing().after('2h-30m') # or Automate().after('2h-30m') since Automate extends Timing
 Automate([
@@ -304,4 +304,4 @@ Automate(
 `:param:` bool shutdown <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; if shutdown is True the computer shuts down after downloads is completely done.
 ## License
-This project is under the [MIT](https://github.com/umutambyi-gad/autoYT/blob/master/LICENSE) license
+This project is under the [MIT](https://github.com/umutambyi-gad/automateYT/blob/master/LICENSE) license

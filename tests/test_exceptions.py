@@ -1,6 +1,6 @@
 import pytest
-from autoYT.__main__ import Automate
-from autoYT.exceptions import *
+from automateYT.__main__ import Automate
+from automateYT.exceptions import *
 
 
 class TestExceptions:

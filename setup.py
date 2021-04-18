@@ -7,12 +7,12 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name="autoYT",
+    name="automateYT",
     version="1.0.0",
-    description="autoYT is lightweight library that automates downloading of youtube videos, subtitles (if available) and playlist.",
+    description="automateYT is lightweight library that automates downloading of youtube videos, subtitles (if available) and playlist.",
     long_description=README,
     long_description_content_type="text/markdown",
-    url="https://github.com/umutambyi-gad/autoYT",
+    url="https://github.com/umutambyi-gad/automateYT",
     author="Umutambyi Gad",
     author_email="umutambyig@gmail.com",
     license="MIT",
@@ -25,7 +25,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python",
     ],
-    packages=["autoYT"],
+    packages=["automateYT"],
     include_package_data=True,
     install_requires=["pytube"],
     keywords=["automate", "youtube", "download", "download_playlist", "download_subtitle", "generate_watch_url_from_playlist",],
